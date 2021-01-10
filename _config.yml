@@ -21,7 +21,7 @@ plugins:             [jekyll-paginate, jekyll-sitemap, jekyll-feed, jekyll-seo-t
 
 # Customise atom feed settings (this is where Jekyll-Feed gets configuration information)
 title:		           "R's Workshop"
-#description:	       'a minimalist Jekyll theme'
+description:	       ''
 author:              'Borting Chen'
 
 # RSS 2.0 can be used instead of Atom by uncommenting following two lines
