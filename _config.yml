@@ -9,6 +9,7 @@
 #   limit: 0
 #   sort_field: 'date'
 #   sort_reverse: true
+url: "https://borting.github.io"
 
 # jekyll-paginate configuration
 paginate:            5
