@@ -1,18 +1,14 @@
 ---
 layout: page
-title: Welcome to Lagrange!
+title: About
 ---
 
-Lagrange is a minimalist Jekyll theme. The purpose of this theme is to provide a simple, clean, content-focused blogging platform for your personal site or blog. Below you can find everything you need to get started.
+### About Borting
 
-### Getting Started
+一個堅信 "偷懶才是人類進步的原動力" 的工程師, 喜歡寫些小工具讓自己的工作輕鬆點.
 
-[Getting Started]({{ site.github.url }}{% post_url 2015-10-10-getting-started %}): getting started with installing Lagrange, whether you are completely new to using Jekyll, or simply just migrating to a new Jekyll theme.
+### About This Template
 
-### Example Content
-
-[Text and Formatting]({{ site.github.url }}{% post_url 2014-01-01-text-formatting-examples %})
-
-### Questions?
-
-This theme is completely free and open source software. You may use it however you want, as it is distributed under the [MIT License](http://choosealicense.com/licenses/mit/). If you are having any problems, any questions or suggestions, feel free to [tweet at me](https://twitter.com/intent/tweet?text=My%question%about%Lagrange%is:%&amp;via=paululele), or [file a GitHub issue](https://github.com/lenpaul/lagrange/issues/new).
+This blog uses [Lagrange](https://github.com/LeNPaul/Lagrange) template, which is a minimalist Jekyll theme developed by [Paul Le](https://github.com/LeNPaul).
+Lagrange is distributed under the [MIT License](https://choosealicense.com/licenses/mit/).
+If you want to use this template, please [fork the Lagrange repository on GitHub](https://github.com/LeNPaul/Lagrange/fork) directly.
