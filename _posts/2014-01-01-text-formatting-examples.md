@@ -1,15 +1,18 @@
 ---
 layout: post
-title: "Text Formatting Examples"
-author: "Paul Le"
+title: "Lagrange: Text Formatting Examples"
+author: "Borting"
 categories: journal
-tags: [documentation,sample]
+tags: [Lagrange,Jekyll]
 image: cards.jpg
 ---
 
+(This post is forked from [Paul Le's Post](https://lenpaul.github.io/Lagrange/journal/text-formatting-examples.html) with some updates.)
+
 # Markdown Support
 
-As always, Jekyll offers support for GitHub Flavored Markdown, which allows you to format your posts using the [Markdown syntax](https://guides.github.com/features/mastering-markdown/). Examples of these text formatting features can be seen below. You can find this post in the `_posts` directory.
+As always, Jekyll offers support for GitHub Flavored Markdown, which allows you to format your posts using the [Markdown syntax](https://guides.github.com/features/mastering-markdown/).
+Examples of these text formatting features can be seen below. You can find this post in the `_posts` directory.
 
 ## Basic Formatting
 
@@ -81,15 +84,29 @@ adder(2, 6);
 
 Another option is to embed your code through [Gist](https://en.support.wordpress.com/gist/).
 
+To escape curly braces inside a markdown code block, try to use `raw` and `endraw` tags, like the following example.
+```html
+{% raw %}<span>
+  {% if page.tags != null %}
+  <b>Tags: </b>
+  {% for tag in page.tags %}
+    {% capture tag_name %}{{ tag }}{% endcapture %}
+    <a href="/tags/{{ tag_name }}"><code class="highligher-rouge"><nobr>{{ tag_name }}</nobr></code></a>
+  {% endfor %}
+  {% endif %}
+</span>{% endraw %}
+```
+
 ## Images
 
 To add an image, use `![alt text](<Image url> "Image meta title")`:
 
-![alt text](http://noirve.com/wp-content/uploads/2013/10/DTTSP_Coffee.jpg "Example")
+![Doraemon](https://upload.wikimedia.org/wikipedia/en/b/bd/Doraemon_character.png "Doraemon")
 
 ## Unordered and Numbered Lists
 
-You can make an unordered and nested list by preceding one or more lines of text with `-`, `*`, or `+`, and indenting sublists. The following lists show the full range of possible list formats.
+You can make an unordered and nested list by preceding one or more lines of text with `-`, `*`, or `+`, and indenting sublists.
+The following lists show the full range of possible list formats.
 
 * List item one
     * List item one
@@ -167,3 +184,8 @@ More information on Markdown can be found at the following links:
 - [Markdown Basics](https://daringfireball.net/projects/markdown/basics)
 - [GitHub Flavoured Markdown Spec](https://github.github.com/gfm/)
 - [Basic writing and formatting syntax](https://help.github.com/articles/basic-writing-and-formatting-syntax/#lists)
+
+## Reference
+
+* [Escaping double curly braces inside a markdown code block in Jekyll](https://stackoverflow.com/a/24102537)
+
