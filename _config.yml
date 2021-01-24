@@ -30,6 +30,9 @@ author:              'Borting Chen'
 #  path: rss-feed.xml
 
 collections:
+  posts:
+    output: true
+    permalink: categories/:year/:month/:day/:title:output_ext
   tags:
     output: true
     permalink: tags/:path/
