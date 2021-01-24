@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Lagrange: Text Formatting Examples"
+title: "Lagrange: Text Formatting"
 author: "Borting"
 categories: journal
 tags: [Lagrange,Jekyll]
