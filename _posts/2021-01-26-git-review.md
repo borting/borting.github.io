@@ -117,6 +117,15 @@ Fetch a specific patchset of a change.
 $ git review -d CHANGE_ID,PATCHSET_NUM
 ```
 
+Fetch and compare two patchsets of a change.
+(This actually creates two branches for each patchset.)
+```bash
+$ git review -m CHANGE_ID,PATCHSET_A-PATCHSET_B
+
+# Example
+$ git review -m 1000,1-3
+```
+
 # Best Practice
 
 My best practice is that: creating a branch at local for preparing submission and deleting that branch after code was reviewed and merged.
@@ -124,7 +133,6 @@ My best practice is that: creating a branch at local for preparing submission an
 Creating a local branch in advance brings convinence when:
 * updating modified commits per reviewers' suggestion, and
 * resolving conflicts when merging or rebasing.
-
 
 # Reference
 
