@@ -7,6 +7,7 @@ tags: [Lagrange,Jekyll]
 image: forest.jpg
 ---
 
+This post introduces how to use Jekyll template, Lagrange, to set up a blog on Github Pages.
 (This post is forked from [Paul Le's Post](https://lenpaul.github.io/Lagrange/journal/getting-started.html) with some updates.)
 
 # Lagrange

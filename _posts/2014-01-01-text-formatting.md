@@ -7,6 +7,7 @@ tags: [Lagrange,Jekyll]
 image: cards.jpg
 ---
 
+This post lists examples of formatting text in Jekyll/Lagrange.
 (This post is forked from [Paul Le's Post](https://lenpaul.github.io/Lagrange/journal/text-formatting-examples.html) with some updates.)
 
 # Markdown Support
