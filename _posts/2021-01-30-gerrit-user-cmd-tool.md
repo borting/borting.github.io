@@ -7,8 +7,8 @@ tags: [Gerrit,Git]
 image: plum.jpg
 ---
 
-如果不想透過 Gerrit 網頁來 review code 的話, 可以透過 `git-review -d` 將 changes fetch 到本機端 review.
-但若要在 command line 環境中要給 changes 打 review 分數的話, 就得依靠 [Gerrit commad line tools](https://gerrit-review.googlesource.com/Documentation/cmd-index.html#user_commands) 了.
+不想透過 Gerrit 網頁來 review code 的話, 可以透過 `git-review -d` 將 changes fetch 到本機端 review.
+但若要在 command line 環境中要給 changes 打分數或是 submit changes 的話, 就得依靠 [Gerrit commad line tools](https://gerrit-review.googlesource.com/Documentation/cmd-index.html#user_commands) 了.
 
 # Gerrit Command Line Tools
 
