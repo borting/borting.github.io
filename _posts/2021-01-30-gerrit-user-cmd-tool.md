@@ -105,6 +105,11 @@ $ gerrit-review -v +1 -c +2 -m "'Good!'" -s a5782bf
 $ gerrit-review --remote gerrit -v +1 -c +2 -s a5782bf
 ```
 
+也可以事先在 `.git/config` 裡指定 `gerrit-review` 要使用哪個 remote 作為 review server
+```bash
+$ git config gerritcli.remote REMOTE_NAME
+```
+
 # Reference
 
 * [Gerrit commad line tools](https://gerrit-review.googlesource.com/Documentation/cmd-index.html#user_commands)
