@@ -15,7 +15,7 @@ image: light-of-world.jpg
 所又花了一個月把要填作者/指到集中在單一 .tex 檔, 也做出可以像 IEEETrans.cls 一樣的 [thesis.cls](https://github.com/borting/nctu-thesis/blob/master/thesis.cls) 方便切換初稿/終稿.
 
 弄完放到 GitHub 上後, 在自己的 FB 和 PPT 的 LaTeX 板發了個自薦文, 想說這個 project 就到此結束了.
-直到離校前某一天, 學妹的朋友跑來實驗室寫論文, 遇到 LaTeX 問題問我.
+直到離校前某一天, Lab 學妹的朋友跑來實驗室寫論文, 遇到 LaTeX 問題問我.
 喵了一眼格式, 哈, 這不是我的 template 嗎 XD.
 原來這就是 open-source developer 看到別人用自己開發的工具時的心情.
 
@@ -23,8 +23,9 @@ image: light-of-world.jpg
 也感謝教務處的人幫忙把 GitHub 連結放到了學校網頁上 (可惜後來網頁改版被拿掉了).
 也有其他實驗是的學弟幫忙把 template 放到了 [Overleaf](https://www.overleaf.com/latex/templates/national-chiao-tung-university-nctu-thesis-template/gwgjqppwgbcq).
 
-Well ~ 雖然以後就叫**陽明交通** (拜託不要叫縮寫) 了, 但我想交大的 template 還可以在撐一陣子吧.
-至少會等新校徽 (拜託不要是蟯蟲貼片) 決定好, 新的教務處和圖書館 (希望不會互踢皮球) 講好格式後的事囉.
-也希望專案有人接手.
-LaTeX 不難, 會越用越順手的.
+Well ~ 雖然以後就叫**陽明交通** (拜託不要叫縮寫) 了, 但我想這個 template 還可再在撐一陣子吧.
+至少會是新校徽決定好 (拜託不要是蟯蟲貼片)  新的教務處和圖書館講好格式 (希望不會互踢皮球) 後的事囉.
+也希望到時這專案有人接手, 改成新的格式.
+
+**LaTeX 不難, 越用越順手的**
 
