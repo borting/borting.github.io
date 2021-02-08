@@ -8,7 +8,7 @@ image: plum.jpg
 ---
 
 Git 是一套 **distributed** version control system, 但大部分的 Git 使用情境還是傾向 centralized 的管理: 將 code commit 到一台 central git server 上, 並從該 server pull/fetch code 下來到 local.
-真正會用到 Git 的 distributed 功能, 大部份是玩大型 open source projects (e.g. Linux) 時, 需要把 code 上到不同的 git repos 上才會遇到.
+真正會用到 Git 的 distributed 功能, 通常是開發大型 open source projects (e.g. Linux) 時, 需要把 code 上到不同的 git repos 上才會遇到.
 
 最近, 因為工作用的筆電硬碟空間不夠用了, 想把部份案子的 SDK 放到部門的 build server 上跑.
 但又希望把開發中的 branch 集中在 local 管理, 方便在不同 branch 之間 cherry-pick commits.
