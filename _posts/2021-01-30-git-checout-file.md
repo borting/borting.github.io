@@ -7,25 +7,25 @@ tags: [Gerrit,Git]
 image: plum.jpg
 ---
 
-This post describes how to retrieve a specific version of a gile from Git.
+This post describes how to retrieve a specific version of a file from Git.
 
 # Retrieve Specific Version of a File
 
 ## Using Git Checkout
 ```bash
-# TREEISH could be a commit/tag/branch
+# TREE-ISH could be a commit/tag/branch
 # '--' indicates not interpret any more arguments as options
-$ git checkout TREEISH -- /PATH/TO/FILE
+$ git checkout TREE-ISH -- /PATH/TO/FILE
 ```
 
 ## Using Git Restore (for Git 2.23+)
 ```bash
-# TREEISH could be a commit/tag/branch
+# TREE-ISH could be a commit/tag/branch
 # '--' indicates not interpret any more arguments as options
-$ git restore -s TREEISH -- /PATH/TO/FILE
+$ git restore -s TREE-ISH -- /PATH/TO/FILE
 
 # Restore working tree and staging area
-$ git restore -s TREEISH -SW -- /PATH/TO/FILE
+$ git restore -s TREE-ISH -SW -- /PATH/TO/FILE
 ```
 
 # Reference
