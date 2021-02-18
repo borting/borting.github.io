@@ -108,6 +108,7 @@ $ git remote rm REMOTE_NAME
 
 * [Let git pull changes from local repository to server repository](https://stackoverflow.com/a/21957554)
 * [Git push/pull between team members local repositories](https://stackoverflow.com/a/42730901)
+* [Push-to-deploy: A nice git workflow for updating server code](http://databio.org/posts/push_to_deploy.html)
 * [Bare vs. non-bare repositories](http://bare-vs-nonbare.gitrecipes.de/)
 * [Cannot push to to a non-bare git repository at remote host](https://stackoverflow.com/a/28257982)
 * [Removing a remote](https://docs.github.com/en/free-pro-team@latest/github/using-git/removing-a-remote)
