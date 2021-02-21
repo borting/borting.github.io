@@ -12,6 +12,15 @@ layout: default
 
 {{ content }}
 
+<span>
+  {% if page.tags != null %}
+    {% for tag in page.tags %}
+      {% capture tag_name %}{{ tag }}{% endcapture %}
+      <a href="/tags/{{ tag_name }}"><code class="highligher-rouge"><nobr>{{ tag_name }}</nobr></code></a>
+    {% endfor %}
+  {% endif %}
+</span>
+
 <span class="post-date">
   {{ site.data.settings.post_date_prefix }}
   {% assign d = page.date | date: "%-d"  %}
@@ -30,16 +39,11 @@ layout: default
   {% endif %}
 </span>
 
-<span>
-  {% if page.tags != null %}
-    {% for tag in page.tags %}
-      {% capture tag_name %}{{ tag }}{% endcapture %}
-      <a href="/tags/{{ tag_name }}"><code class="highligher-rouge"><nobr>{{ tag_name }}</nobr></code></a>
-    {% endfor %}
-  {% endif %}
-</span>
+<hr>
 
 {% include social-sharing.html %}
+
+<hr>
 
 {% include related-posts.html %}
 
