@@ -26,9 +26,9 @@ image: chimei-museum.jpg
 ## 建立假造的 uname script
 
 ```bash
-# mkdir ~/.local/fakeuname
-# vim ~/.local/fakeuname/uname
-# chmod u+x ~/.local/fakeuname/uname
+$ mkdir ~/.local/fakeuname
+$ vim ~/.local/fakeuname/uname
+$ chmod u+x ~/.local/fakeuname/uname
 ```
 
 以下是一個簡單的 `uname` script 範例:
