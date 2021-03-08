@@ -4,7 +4,7 @@ title: "Lagrange: Text Formatting"
 author: "Borting"
 categories: journal
 tags: [Lagrange,Jekyll]
-image: cards.jpg
+image: forest.jpg
 ---
 
 This post lists examples of formatting text in Jekyll/Lagrange.

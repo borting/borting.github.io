@@ -11,8 +11,8 @@ image: cards.jpg
 
 Tag                 | Image
 --------------------|--------------------------
-Lagrange            | cards.jpg    
-Jekyll              | cards.jpg
+Lagrange            | forest.jpg    
+Jekyll              | forest.jpg
 Gerrit              | plum.jpg
 GitHub              | plum.jpg
 Git                 | plum.jpg
@@ -23,4 +23,6 @@ container           | chimei-museum.jpg
 Docker              | chimei-museum.jpg
 Singularity         | chimei-museum.jpg
 Linux               | Jokulsarlon.jpg
-
+driver              | Jokulsarlon.jpg
+C                   | Rurikoin.jpg
+C++                 | Rurikoin.jpg
