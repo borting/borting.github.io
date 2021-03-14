@@ -25,4 +25,4 @@ Singularity         | chimei-museum.jpg
 Linux               | Jokulsarlon.jpg
 driver              | Jokulsarlon.jpg
 C                   | Rurikoin.jpg
-C++                 | Rurikoin.jpg
+CPP                 | Rurikoin.jpg
