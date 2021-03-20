@@ -16,6 +16,7 @@ Jekyll              | forest.jpg
 Gerrit              | plum.jpg
 GitHub              | plum.jpg
 Git                 | plum.jpg
+Repo                | plum.jpg
 LaTex               | light-of-world.jpg
 Python              | Heidelberg.jpg
 PyPI                | Heidelberg.jpg
@@ -26,3 +27,7 @@ Linux               | Jokulsarlon.jpg
 driver              | Jokulsarlon.jpg
 C                   | Rurikoin.jpg
 CPP                 | Rurikoin.jpg
+
+# GitHub Markdown Langauge Highlight Support
+
+Github uses [linguist](https://github.com/github/linguist/blob/master/lib/linguist/languages.yml).
