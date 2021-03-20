@@ -77,5 +77,6 @@ It is designed to be binary-compatible and produce a stable ABI (based on System
 * [System V ABI](https://wiki.osdev.org/System_V_ABI)
 * [What is an application binary interface (ABI)?](https://stackoverflow.com/a/2456882)
 * [细谈ABI (Application Binary interface)](https://juejin.cn/post/6894179449996312589)
+* [Where is the x86-64 System V ABI documented?](https://stackoverflow.com/a/40348010)
 * [Linux Standard Base](https://en.wikipedia.org/wiki/Linux_Standard_Base)
 * [What are the calling conventions for UNIX & Linux system calls (and user-space functions) on i386 and x86-64](https://stackoverflow.com/a/2538212)
