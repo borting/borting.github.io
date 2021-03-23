@@ -42,9 +42,13 @@ Sometimes it is useful to have different levels of headings to structure your do
 
 ###### Heading Six (h6)
 
-## Links
+## External Links
 
 You can create an inline link by wrapping link text in square brackets `[ ]`, and then wrapping the URL in parentheses `( )`. For example, it is very easy to [link to Google!](http://google.com).
+
+## Internal Links
+
+To link internal post, you can write something like [Link to Getting Started]({% post_url 2015-10-10-getting-started %}).
 
 ## Blockquotes
 
