@@ -126,7 +126,8 @@ Win64 選擇 LLP64 的主要考量是希望 Win32 下寫的程式可以直接 po
 
 ## x32 ABI
 
-雖然 x86_64 的 64-bit Linux 選用了 LP64 model, 但部份 Linux distributions 也提供了 [x32 ABI](https://wiki.debian.org/X32Port), 讓在 i386 32-bit Linux 中開發的程式可以直接在 x86_64 64-bit Linux 上執行.
+雖然 x86_64 的 64-bit Linux 選用了 LP64 model, 但部份 Linux distributions 也提供了 [x32 ABI](https://wiki.debian.org/X32Port), 讓在 i386 32-bit Linux 中開發的程式不需經過重新編譯就可以在 x86_64 64-bit Linux 上執行.
+(當然 x86_64 上的 64-bit Linux 也要事先安裝 32-bit 的 loader 和 shared libraries.)
 前面範例中編譯 `datasize.c` 時多下 `-m32` 參數後仍可在 64-bit Linux 上執行, 也是因為 64-bit Linux 上有支援 x32 ABI.
 透過 x32 ABI 執行的程式, `int`, `long` 和 `pointer` 的長度都是 32 bits.
 所以執行解果看到的 data type 長度才會與 ILP32 model 一致.
