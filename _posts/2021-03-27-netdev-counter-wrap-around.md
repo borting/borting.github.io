@@ -112,11 +112,11 @@ struct net_device_stats {
 如果 64-bit CPU 平台執行的是 32-bit Linux 會發生什麼事呢?
 (嘿嘿嘿~)
 另外, 為什麼 64-bit Linux 上的 `unsigned long` 長度是 64 bits 呢?
-這其實和作業系統的 [`data model`](http://nickdesaulniers.github.io/blog/2016/05/30/data-models-and-word-size/) 有關.
-這些就留到下一篇再來解釋吧.
+這和作業系統的 **data model** 有關.
+這些就留到[下一篇]({% post_url 2021-03-28-data-model %})再來解釋吧.
 
 # Conslusion
 
 不管是在 32-bit 還是 64-bit Linux 平台上, 透過 `dev_get_stats()` 拿到的都是 64-bit 的資料結構 `struct rtnl_link_stats64`.
 但 device counter 的上限取決於: (1) unsigned long 的長度 (32 or 64 bits), (2) driver 實做了哪個 hook (`ndo_get_stats()` or `ndo_get_stats64()`).
-要確保在兩平台都不會發生溢位, 則 driver 應該要實做 `ndo_get_stats64()` hook, 提供 64-bit 的 counter 資料.
+要確保在兩平台都不會發生溢位, 則 driver 應該要實做 `ndo_get_stats64()` hook, 提供 64-bit 的 counter 資訊.
