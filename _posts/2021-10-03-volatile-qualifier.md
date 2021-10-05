@@ -14,7 +14,7 @@ Volatile qualifier 宣告一個 variable 的值是會不斷改變.
 
 Quote 一下 [這篇文章](https://www.keil.com/support/man/docs/armcc/armcc_chr1359124222941.htm):
 * The volatile variable can be modified at any time externally to the implementation, for example, by the operating system, by another thread of execution such as an interrupt routine or signal handler, or by hardware.
-* The compiler cannot perform optimizations on the variable, for example, caching its value in a register to avoid memory accesses.
+* The compiler cannot perform optimizations on the variable, for example, caching its value in a register to avoid memory accesses, to avoiding code elision during optimization based on assumption of non visible side effects.
 
 In practice, you must declare a variable as volatile whenever you are:
 * Accessing memory-mapped peripherals.
