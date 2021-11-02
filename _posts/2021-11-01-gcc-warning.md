@@ -36,6 +36,13 @@ Some projects even turn them into errors via `-Werror` as their first line of de
 
 Also called flow-based warnings.
 
+* `-Warray-bounds` detects out-of-bounds array indices
+* `-Wformat-overflow` looks for buffer overflows in calls to sprintf and related functions
+* `-Wnonnull` detects passing null pointers to functions that don't expect it
+* `-Wstringop-overflow` helps find buffer overflow in calls to string and raw memory functions
+* `-Wuninitialized` finds uses of uninitialized variables
+
+
 # Reference
 * [Understanding GCC warnings](https://developers.redhat.com/blog/2019/03/13/understanding-gcc-warnings)
 * [Understanding GCC warnings, Part 2](https://developers.redhat.com/blog/2019/03/13/understanding-gcc-warnings-part-2)
