@@ -27,6 +27,43 @@ $ git ls-files | wc -l
 $ git diff --name-status commit_1 commit_2 | grep ".h$\|.c$\|Makefile" | wc -l
 ```
 
+
+# Hyperfine
+
+## Installation
+* Download latest release from [github](https://github.com/sharkdp/hyperfine/releases/)
+* Install using dpkg
+```shell
+$ sudo dpkg -i hyperfine_1.12.0_amd64.deb
+```
+
+## Usage
+
+* Basic executaion
+```shell
+$ hyperfine 'command'
+
+# Example
+$ hyperfine 'sleep 1'
+```
+
+* Set number of runs
+```shell
+# Run 5 times
+$ hyperfine -r5 'sleep 1'
+```
+
+* Run benchmark on a warn cache, i.e. doing server pre-run
+```shell
+# Do 3 pre-run
+$ hyperfine -w 3 'sleep 1'
+```
+
+* Run benchmark on a cold cache
+```shell
+$ hyperfine --prepare 'sync; echo 3 | sudo tee /proc/sys/vm/drop_caches' 'sleep 1'
+```
+
 # Tools
 
 ## Docker Image/Layer Content Explorer
@@ -37,6 +74,8 @@ $ git diff --name-status commit_1 commit_2 | grep ".h$\|.c$\|Makefile" | wc -l
 
 * [Phoronix Test Suite](https://github.com/phoronix-test-suite/phoronix-test-suite/)
 * [hyperfine](https://github.com/sharkdp/hyperfine)
+* [Linux kernel compile benchmarks kcbench & kcbenchrate](https://gitlab.com/knurd42/kcbench/-/tree/master)
+
 
 # Reference
 
@@ -48,3 +87,4 @@ $ git diff --name-status commit_1 commit_2 | grep ".h$\|.c$\|Makefile" | wc -l
 * [How to Compile a Linux Kernel](https://www.linux.com/topic/desktop/how-compile-linux-kernel-0/)
 * [Timed Linux Kernel Compilation](https://openbenchmarking.org/test/pts/build-linux-kernel)
 * [Measuring Kernel Compile Times with Clang](https://linuxplumbersconf.org/event/7/contributions/802/attachments/652/1192/Measuring_Kernel_Compile_Times_w__Clang.pdf)
+* [kcbench, the Linux kernel compile benchmark, version 0.9.0 is out](http://thorstenl.blogspot.com/2020/06/kcbench-linux-kernel-compile-benchmark.html)
