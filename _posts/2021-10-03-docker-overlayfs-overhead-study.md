@@ -19,12 +19,12 @@ image: chimei-museum.jpg
 
 * Count number of files in a git repository
 ```bash
-$ git ls-files | wc -l
+$ git ls-files | grep ".dts$\|.dtsi$\|.h$\|.c$\|Makefile" | wc -l
 ```
 
 * Count changed .c/.h and Makefile
 ```bash
-$ git diff --name-status commit_1 commit_2 | grep ".h$\|.c$\|Makefile" | wc -l
+$ git diff --name-status commit_1 commit_2 | grep ".dts$\|.dtsi$\|.h$\|.c$\|Makefile" | wc -l
 ```
 
 
@@ -64,6 +64,25 @@ $ hyperfine -w 3 'sleep 1'
 $ hyperfine --prepare 'sync; echo 3 | sudo tee /proc/sys/vm/drop_caches' 'sleep 1'
 ```
 
+* Final command
+```shell
+$ make mrproper && git clean -f && git reset --hard HEAD
+$ sudo sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
+$ hyperfine -r3 'make mrproper && git clean -f && git reset --hard HEAD && cp /boot/config-$(uname -r) .config && yes "x" | make menuconfig && make -j $(nproc) --silent'
+```
+
+Note: set 
+```shell
+CONFIG_SYSTEM_TRUSTED_KEYS=""
+CONFIG_SYSTEM_REVOCATION_KEYS=""
+```
+
+# Test
+
+* test 5.10 ~ 5.10.78: layer size, layer-by-layer compile time, number of file change
+* test 5.10, 5.11, 5.12, 5.13: layer size, layer-by-layer compile time, number of file change
+* test 5.4 ~ 5.4.158: layer size, number of file change
+
 # Tools
 
 ## Docker Image/Layer Content Explorer
@@ -88,3 +107,5 @@ $ hyperfine --prepare 'sync; echo 3 | sudo tee /proc/sys/vm/drop_caches' 'sleep 
 * [Timed Linux Kernel Compilation](https://openbenchmarking.org/test/pts/build-linux-kernel)
 * [Measuring Kernel Compile Times with Clang](https://linuxplumbersconf.org/event/7/contributions/802/attachments/652/1192/Measuring_Kernel_Compile_Times_w__Clang.pdf)
 * [kcbench, the Linux kernel compile benchmark, version 0.9.0 is out](http://thorstenl.blogspot.com/2020/06/kcbench-linux-kernel-compile-benchmark.html)
+* [How to determine the maximum number to pass to make -j option?](https://unix.stackexchange.com/a/208569)
+* [Compiling the kernel 5.11.11](https://askubuntu.com/a/1329625)
