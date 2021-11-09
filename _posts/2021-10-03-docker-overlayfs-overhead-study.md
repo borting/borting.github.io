@@ -27,6 +27,13 @@ $ git ls-files | grep ".dts$\|.dtsi$\|.h$\|.c$\|Makefile" | wc -l
 $ git diff --name-status commit_1 commit_2 | grep ".dts$\|.dtsi$\|.h$\|.c$\|Makefile" | wc -l
 ```
 
+# Kernel Build Environemnt
+
+```shell
+$ sudo apt update
+$ sudo apt install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+```
+
 
 # Hyperfine
 
@@ -69,6 +76,8 @@ $ hyperfine --prepare 'sync; echo 3 | sudo tee /proc/sys/vm/drop_caches' 'sleep 
 $ make mrproper && git clean -f && git reset --hard HEAD
 $ sudo sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
 $ hyperfine -r3 'make mrproper && git clean -f && git reset --hard HEAD && cp /boot/config-$(uname -r) .config && yes "x" | make menuconfig && make -j $(nproc) --silent'
+
+# hyperfine -r3 'make mrproper && git clean -f && git reset --hard HEAD && cp ../linux_config .config && yes "x" | make menuconfig && make -j $(nproc) --silent'
 ```
 
 Note: set 
@@ -93,7 +102,8 @@ CONFIG_SYSTEM_REVOCATION_KEYS=""
 
 * [Phoronix Test Suite](https://github.com/phoronix-test-suite/phoronix-test-suite/)
 * [hyperfine](https://github.com/sharkdp/hyperfine)
-* [Linux kernel compile benchmarks kcbench & kcbenchrate](https://gitlab.com/knurd42/kcbench/-/tree/master)
+* [Linux kernel compile benchmarks kcbench & kcbenchrate](https://gitlab.com/knurd42/kcbench/-/tree/master) ([intro](http://thorstenl.blogspot.com/2020/06/kcbench-linux-kernel-compile-benchmark.html))
+* [tuxmake](https://gitlab.com/Linaro/tuxmake) ([intro](https://lwn.net/Articles/841624/))
 
 
 # Reference
@@ -109,3 +119,4 @@ CONFIG_SYSTEM_REVOCATION_KEYS=""
 * [kcbench, the Linux kernel compile benchmark, version 0.9.0 is out](http://thorstenl.blogspot.com/2020/06/kcbench-linux-kernel-compile-benchmark.html)
 * [How to determine the maximum number to pass to make -j option?](https://unix.stackexchange.com/a/208569)
 * [Compiling the kernel 5.11.11](https://askubuntu.com/a/1329625)
+* [Portable and reproducible kernel builds with TuxMake](https://lwn.net/Articles/841624/)
