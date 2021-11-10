@@ -22,7 +22,7 @@ image: chimei-museum.jpg
 $ git ls-files | grep ".dts$\|.dtsi$\|.h$\|.c$\|Makefile" | wc -l
 ```
 
-* Count changed .c/.h and Makefile
+* Count changed .c/.h, .dts/.dtsi, and Makefile
 ```bash
 $ git diff --name-status commit_1 commit_2 | grep ".dts$\|.dtsi$\|.h$\|.c$\|Makefile" | wc -l
 ```
@@ -34,6 +34,32 @@ $ sudo apt update
 $ sudo apt install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
 ```
 
+# Kernel Build Command
+
+* Copy linux config
+```shell
+$ cp /boot/config-$(uname -r) .config
+```
+
+* Test command
+```shell
+$ make mrproper && git clean -f && git reset --hard HEAD
+
+$ git co v5.10
+
+$ make mrproper && git clean -f && git reset --hard HEAD && cp ../linux_config .config && yes "x" | make menuconfig
+$ make -j $(nproc) &> make.log
+```
+
+* Run with hyperfine
+```shell
+$ make mrproper && git clean -f && git reset --hard HEAD
+
+$ git co v5.10
+
+$ sudo sync; echo 3 | sudo tee /proc/sys/vm/drop_caches
+$ hyperfine -r10 'make mrproper && git clean -f && git reset --hard HEAD && cp ../linux_config .config && yes "x" | make menuconfig && make -j $(nproc) --silent'
+```
 
 # Hyperfine
 
@@ -86,6 +112,70 @@ CONFIG_SYSTEM_TRUSTED_KEYS=""
 CONFIG_SYSTEM_REVOCATION_KEYS=""
 ```
 
+# Linux Source for Docker
+
+* Checkout to the base commit
+```shell
+$ git co v5.10
+```
+
+* Move .git/ to somewhere out of the repos folder
+```shell
+$ mv .git ../linux_git
+```
+
+* Copy part of files in .git
+```shell
+$ mkdir .git
+$ cp ../linux_git/HEAD .git/
+$ cp ../linux_git/index .git/
+```
+
+* Pack the git repos, restore .git
+
+* Unpack the archive and change the owner to root
+
+# Update Linux source in Docker
+
+* Folders need to mount from outside
+```
+.git/objects
+.git/packed-refs
+.git/refs
+
+# Maybe unnecessary
+.git/config
+.git/description
+.git/hooks
+.git/info
+.git/logs
+
+# Ignore if outside SDK do not have this
+.git/branches
+.git/rr-cache
+.git/svn
+```
+
+* Update repos inside docker
+```shell
+# Checkout tag or commit ID
+# DONOT checkout branch since this creates new entry in .git/config
+$ git checkout <commit-ish>
+```
+
+* Reset HEAD's ownership under .git after update from docker
+```shell
+$ find .git/ -name "HEAD" | xargs chown ${UID}:${UID}
+```
+
+* Execute container
+```shell
+$ docker run --rm -it -v ${HOME}/repos/linux/.git/objects:/root/linux/.git/objects:ro \
+  -v ${HOME}/repos/linux/.git/refs:/root/linux/.git/refs:ro \
+  -v ${HOME}/repos/linux/.git/packed-refs:/root/linux/.git/packed-refs:ro \
+  docker_image
+```
+
 # Test
 
 * test 5.10 ~ 5.10.78: layer size, layer-by-layer compile time, number of file change
@@ -120,3 +210,4 @@ CONFIG_SYSTEM_REVOCATION_KEYS=""
 * [How to determine the maximum number to pass to make -j option?](https://unix.stackexchange.com/a/208569)
 * [Compiling the kernel 5.11.11](https://askubuntu.com/a/1329625)
 * [Portable and reproducible kernel builds with TuxMake](https://lwn.net/Articles/841624/)
+* [談談.git 目錄](http://wen00072.github.io/blog/2015/03/10/talk-git-directory/)
