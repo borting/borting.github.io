@@ -31,7 +31,8 @@ $ git diff --name-status commit_1 commit_2 | grep ".dts$\|.dtsi$\|.h$\|.c$\|Make
 
 ```shell
 $ sudo apt update
-$ sudo apt install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison
+$ sudo apt install git fakeroot build-essential ncurses-dev xz-utils libssl-dev bc flex libelf-dev bison cpio lz4
+$ sudo apt install vim wget 
 ```
 
 # Kernel Build Command
