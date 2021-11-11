@@ -202,6 +202,11 @@ $ docker run --rm -it -v ${HOME}/repos/linux/.git/objects:/root/linux/.git/objec
 
 * [Git Tools](https://github.com/MestreLion/git-tools)
 
+* [Git clone changes file modification time](https://stackoverflow.com/questions/21735435/git-clone-changes-file-modification-time)
+* [Checking out old files WITH original create/modified timestamps](https://stackoverflow.com/questions/2179722/checking-out-old-files-with-original-create-modified-timestamps)
+* [What's the equivalent of Subversion's "use-commit-times" for Git?](https://stackoverflow.com/questions/1964470/whats-the-equivalent-of-subversions-use-commit-times-for-git)
+* [	Re: Git checkout preserve timestamp?](https://markmail.org/message/b45lyln5eig6tp4x)
+
 # Reference
 
 * [How containers work: overlayfs](https://jvns.ca/blog/2019/11/18/how-containers-work--overlayfs/)
