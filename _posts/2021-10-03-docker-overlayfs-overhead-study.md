@@ -141,8 +141,10 @@ $ cp ../linux_git/index .git/
 * Folders need to mount from outside
 ```
 .git/objects
-.git/packed-refs
 .git/refs
+
+# Maybe not
+.git/packed-refs
 
 # Maybe unnecessary
 .git/config
@@ -196,6 +198,9 @@ $ docker run --rm -it -v ${HOME}/repos/linux/.git/objects:/root/linux/.git/objec
 * [Linux kernel compile benchmarks kcbench & kcbenchrate](https://gitlab.com/knurd42/kcbench/-/tree/master) ([intro](http://thorstenl.blogspot.com/2020/06/kcbench-linux-kernel-compile-benchmark.html))
 * [tuxmake](https://gitlab.com/Linaro/tuxmake) ([intro](https://lwn.net/Articles/841624/))
 
+##  Git Timestamp
+
+* [Git Tools](https://github.com/MestreLion/git-tools)
 
 # Reference
 
