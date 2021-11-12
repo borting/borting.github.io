@@ -207,6 +207,33 @@ $ docker run --rm -it -v ${HOME}/repos/linux/.git/objects:/root/linux/.git/objec
 * [What's the equivalent of Subversion's "use-commit-times" for Git?](https://stackoverflow.com/questions/1964470/whats-the-equivalent-of-subversions-use-commit-times-for-git)
 * [	Re: Git checkout preserve timestamp?](https://markmail.org/message/b45lyln5eig6tp4x)
 
+* `git restore-mtime` 會 restore file 的 atime 和 mtime, 但是 ctime 還是會被更新
+
+## Docker Images Diff
+
+* [Introducing container-diff, a tool for quickly comparing container images](https://opensource.googleblog.com/2017/11/container-diff-for-comparing-container-images.html)
+* [container-diff](https://github.com/GoogleContainerTools/container-diff)
+```shell
+# local img1 = daemon://ubuntu:20.04
+$ container-diff diff <img1> <img2> --type=file
+```
+--> Not usefull, cannot show touched but unchanged files.
+
+* 在 container 中, 新增在刪除的檔案, 在 commit 時後不會被紀錄下來
+* 但已存在在 layer 中的檔案, 就算恢復成原狀, commit 時還是會被記錄下來
+* 因為 Linux file [三個 timestamp: atime, mtime, utime](https://www.howtogeek.com/517098/linux-file-timestamps-explained-atime-mtime-and-ctime/) 中的 ctime 變了 
+
+
+* git operation in docker
+
+如果直接 "git reset --hard HEAD", 則所有 files 都會被 update 一次, docker build 後 size double
+但如果先 "git status" 重建 .git/index 再 "git reset --hard HEAD", 則 files 不會被 update
+另一個奇怪的方法是 "git reset HEAD && git reset --hard HEAD" 也不會把全部 file update 一次
+
+"git checkout tag\_id" "git checkout branch\_name" 都不會造成所有 files 被 update
+
+
+
 # Reference
 
 * [How containers work: overlayfs](https://jvns.ca/blog/2019/11/18/how-containers-work--overlayfs/)
