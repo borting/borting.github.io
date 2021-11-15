@@ -38,7 +38,7 @@ For example,
 * relatime (relative atime): This option updates the access timestamp only if it was more than 24-hours old, or the previous one was older than the current modified or changed timestamps.
 For more options, see [mount manpage](https://man7.org/linux/man-pages/man8/mount.8.html)
 
-To check how mounted filesystems handle atime
+To know how mounted filesystems handle atime, check
 ```shell
 $ cat /proc/mounts
 ```
@@ -47,7 +47,6 @@ On my computer, the `/` is mounted as `relatime` options.
 ```
 /dev/sda1 / ext4 rw,relatime,errors=remount-ro,data=ordered 0 0
 ```
-
 
 # Reference
 * [Linux File Timestamps Explained: atime, mtime, and ctime](https://www.howtogeek.com/517098/linux-file-timestamps-explained-atime-mtime-and-ctime/)
