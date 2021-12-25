@@ -27,6 +27,8 @@ Linux               | Jokulsarlon.jpg
 driver              | Jokulsarlon.jpg
 C                   | Rurikoin.jpg
 CPP                 | Rurikoin.jpg
+Bash                | shell.jpg
+Vim                 | BayaoBay.jpg
 
 # GitHub Markdown Langauge Highlight Support
 
