@@ -3,8 +3,8 @@ layout: post
 title: "Print Multiple Lines to File from Bash"
 author: "Borting"
 categories: journal
-tags: [Linux]
-image: Jokulsarlon.jpg
+tags: [bash, Linux]
+image: shell.jpg
 ---
 
 Print multiple lines to file from bash.
