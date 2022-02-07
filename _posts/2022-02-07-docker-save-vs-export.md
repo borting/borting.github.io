@@ -4,7 +4,7 @@ title: "Difference between Docker Save and Export"
 author: "Borting"
 categories: journal
 tags: [Docker, container]
-image: cards.jpg
+image: chimei-museum.jpg
 ---
 
 Docker 提供兩種輸出 image/container 成壓縮檔的方式: `save/load` 和 `export/import`
