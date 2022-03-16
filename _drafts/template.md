@@ -29,6 +29,8 @@ C                   | Rurikoin.jpg
 CPP                 | Rurikoin.jpg
 Bash                | shell.jpg
 Vim                 | BayaoBay.jpg
+Jenkins             | Wuling.jpg
+DevOps              | Wuling.jpg
 
 # GitHub Markdown Langauge Highlight Support
 
