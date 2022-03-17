@@ -48,6 +48,27 @@ docker run \
 * Go to "Manage Jenkins" --> "Configure System"
 * Set "Default Language" to `zh_TW`
 
+# Role Management
+
+## General
+* '真' 管理員要有 "Overall --> "
+* User 登入要能夠看到東西, 所屬的 roles 只少要有 "Overall --> Read" 權限.
+
+## Node 管理權限
+* 要管理 Jenkins nodes, user 所屬的 roles 需要有 "Agent" 權限.
+  * 有 "Agent --> Create" 權限才可以在 "Dashboard --> Node" 下 "New Node"
+  * 有 "Agent --> Connect/Disconnect" 權限才可以將 Jenkins nodes 連/斷線
+* Agent 下的
+
+
+
+# Jenkins Runtime Unit
+
+* Node 和 agent (以前稱 slave) 都是 Jenkins 來執行 jobs 的實體 (server, etc.).
+  * Agent is for declarative pipelines
+  * Node is for scripted pipelines
+
+
 # Reference
 
 * [Official Jenkins Docker image](https://github.com/jenkinsci/docker/blob/master/README.md)
