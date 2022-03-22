@@ -71,6 +71,16 @@ docker run \
 
 # Reference
 
-* [Official Jenkins Docker image](https://github.com/jenkinsci/docker/blob/master/README.md)
+# General
+* [探索 Jenkins-CI 從認識到應用](https://ithelp.ithome.com.tw/users/20091802/ironman/925)
+
+## Setup
+* [Official Jenkins Docker image on GitHub](https://github.com/jenkinsci/docker)
 * [使用 Docker 安裝 Jenkins](https://twblog.hongjianching.com/2018/10/09/install-jenkins-with-docker/)
 * [Jenkins not able to access internet when running as docker container](https://stackoverflow.com/q/39709941)
+
+
+## Role-based Strategy
+* [Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)
+* [Jenkins - Role Based Strategy Setup](https://www.c-sharpcorner.com/article/jenkins-role-based-strategy-setup/)
+
