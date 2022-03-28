@@ -36,11 +36,16 @@ docker run \
 
 * At first login, you need to enter password, which can be found at `$HOME/jenkins/jenkins_home/secrets/initialAdminPassword`.
 
+* Use JNLP to control agents.
+Go to `Dashboad` --> "Configure Global Security" --> set `TCP port for inbound agents` to `50000` --> in `agent protcol`, check `Inbound TCP Agent Protocol/4 (TLS encryption)`
+
+
+
 # Install Plugins
 
 Install plugins:
 * Go to "Manage Jenkins" --> "Manage Plugins"
-* Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)"
+* Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)", "[Gerrit Trigger](https://plugins.jenkins.io/gerrit-trigger/)"
 
 ## Role-based Authotization
 
@@ -80,7 +85,7 @@ Global roles:
 * 要管理 Jenkins nodes, user 所屬的 roles 需要有 "Agent" 權限.
   * 有 "Agent --> Create" 權限才可以在 "Dashboard --> Node" 下 "New Node"
   * 有 "Agent --> Connect/Disconnect" 權限才可以將 Jenkins nodes 連/斷線
-* Agent 下的
+* 可以用 `Label` 去管理可執行相同工作的 nodes
 
 ## 分工
 
@@ -100,9 +105,49 @@ Jenkins Controller 的實際管理者需要有 `manager` 的權限
 
 假設一個擁有 `Agent` 和 `Job` 所有權限的管理者, 這裡說明他可以對 Jenkins Controller 的操作.
 
+## Jenkins Agent Settings
+
+* Install Java for JNLP ([Java Network Launch Protocol](https://en.wikipedia.org/wiki/Java_Web_Start)) communication between controller and agent.
+```shell
+# On ubuntu 20.04
+sudo apt install openjdk-17-jre
+```
+
+* The Jenkins jobs dispatched to this node will be executed by the account that invokes the Jenkins slave agent.
+Hence, we need to add the acount which would execte Jenkins jobs to `docker` group.
+
+* Create workspace
+```shell
+mkdir -p $HOME/workspace
+mkdir -p $HOME/jenkins/scripts
+```
+
 ## Agent Configuration
 
-Go to `Dashboard` --> `Set up an agent` --> set node name and check `Permanent Agent`
+Create new node on controller
+* Go to `Dashboard` --> `Set up an agent` or go to `Dashboard` --> `Build Executor Status` --> `New Node`
+* Set node name and check `Permanent Agent`
+* Set `Number of executors` to define max number of concurrent builds
+* Create a working dir for jenkins and set an absolute path to `Remote root directory`
+```shell
+mkdir -p $HOME/workspace
+```
+* Set a `label` to create agent group for same jobs
+* Set `Launch method` as `Launch agent by connecting it to the controller`
+
+After node createtion, 
+* Go to `Dashboard` --> `Build Executor Status` --> click the icon of the newly added node.
+Or visit node management page: `http://JENKINS_IP:PORT/computer/`
+* Download `agent.jar`, upload it to the Jenkins node, and put it under `$HOME/jenkins/scripts`
+* Run the command specified in the web, for example
+```shell
+java -jar agent.jar -jnlpUrl http://172.21.35.148:8080/computer/Archer/jenkins-agent.jnlp -secret 6af8b1c40bbec4fa0beb682c5340ba5fa243af4ab50c1dbcdb7c32d10fe93ee5 -workDir "/home/jenkins/workspace"
+```
+* Setup `.gitconfig`, `.ssh/config`, `.ssh/id_rsa_jenkins.pub`
+
+
+
+
 
 
 
@@ -169,7 +214,7 @@ Go to `Dashboard` --> `Set up an agent` --> set node name and check `Permanent A
 * [Official Jenkins Docker image on GitHub](https://github.com/jenkinsci/docker)
 * [使用 Docker 安裝 Jenkins](https://twblog.hongjianching.com/2018/10/09/install-jenkins-with-docker/)
 * [Jenkins not able to access internet when running as docker container](https://stackoverflow.com/q/39709941)
-
+* [There is no "Launch agent via Java Web Start" option in my jenkins when I adding a windows slave node](https://stackoverflow.com/a/58024425)
 
 ## Role-based Strategy
 * [Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)
