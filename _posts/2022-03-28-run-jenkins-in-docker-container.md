@@ -36,9 +36,9 @@ docker run \
 
 * At first login, you need to enter password, which can be found at `$HOME/jenkins/jenkins_home/secrets/initialAdminPassword`.
 
-# Plugins
+# Install Plugins
 
-Install additional plugin
+Install plugins:
 * Go to "Manage Jenkins" --> "Manage Plugins"
 * Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)"
 
@@ -54,11 +54,16 @@ Install additional plugin
 
 # Role Management
 
+Go to "Manage Jenkins" --> "Manage and Assign Roles" for configuration
+
 ## General
 
 Global roles:
-* 有 "Overall --> Administer" 權限的 Role 才有權限管理 roles 和 users.
-* 所有 role 燈至少要有 "Overall --> Read" 的權限, 登入後才能夠看到東西
+* 有 "Overall --> Administer" 權限的 role 才能 configure/manage roles 和 assign roles to users.
+* Role 至少要有 "Overall --> Read" 的權限, 登入後才能夠看到東西
+
+* Agent 類型的 role permission 是用來管理 Jenkins Slave/Node/Agent 的, 屬於 build resources 管理
+* Job 類型 role permission 是用來管理 build 的, 屬於 build configuration 管理
 
 ## Node 管理權限
 * 要管理 Jenkins nodes, user 所屬的 roles 需要有 "Agent" 權限.
@@ -86,6 +91,12 @@ Global roles:
 ## Agent to Controller Access Control
 
 * [Customizing Agent →  Controller Security](https://www.jenkins.io/doc/book/security/controller-isolation/agent-to-controller/)
+
+## Jenkins 名詞
+
+* Jenkins 的許多名詞有經過 BLM 處理.
+例如 Jenkins master/slave, 轉成叫中性的 Jenkins controller 和 Jenkins node/agent.
+在看文件時可以注意.
 
 
 # Reference
