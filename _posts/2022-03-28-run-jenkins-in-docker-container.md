@@ -100,7 +100,9 @@ Jenkins Controller 的實際管理者需要有 `manager` 的權限
 
 假設一個擁有 `Agent` 和 `Job` 所有權限的管理者, 這裡說明他可以對 Jenkins Controller 的操作.
 
+## Agent Configuration
 
+Go to `Dashboard` --> `Set up an agent` --> set node name and check `Permanent Agent`
 
 
 
@@ -117,7 +119,7 @@ Jenkins Controller 的實際管理者需要有 `manager` 的權限
 
 
 
-
+* Jenkins server will dispatch job to these node automatically according to the job configuration and node labels.
 
 
 
