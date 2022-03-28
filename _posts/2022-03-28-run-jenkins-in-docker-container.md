@@ -7,7 +7,7 @@ tags: [Jenkins, DevOps, Docker]
 image: Wuling.jpg
 ---
 
-因為工作需求, 在 Docker 中跑 Jenkins container 作為自己測試用.
+因為工作需求, 用 Docker container 建了一個 Jenkins service 作為自己測試 Jenkins 功能的 test server.
 這裡紀錄一下步驟.
 
 # Run Jenkins Service
@@ -34,9 +34,11 @@ docker run \
 
 * Access Jenkins Web from `http://127.0.0.1:8080/` and you need to enter password, which can be found at `$HOME/jenkins/jenkins_home/secrets/initialAdminPassword`.
 
-* Install additional plugin
-  * Go to "Manage Jenkins" --> "Manage Plugins"
-  * Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)"
+# Plugins
+
+Install additional plugin
+* Go to "Manage Jenkins" --> "Manage Plugins"
+* Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)"
 
 ## Role-based Authotization
 
@@ -51,8 +53,10 @@ docker run \
 # Role Management
 
 ## General
-* '真' 管理員要有 "Overall --> "
-* User 登入要能夠看到東西, 所屬的 roles 只少要有 "Overall --> Read" 權限.
+
+Global roles:
+* 有 "Overall --> Administer" 權限的 Role 才有權限管理 roles 和 users.
+* 所有 role 燈至少要有 "Overall --> Read" 的權限, 登入後才能夠看到東西
 
 ## Node 管理權限
 * 要管理 Jenkins nodes, user 所屬的 roles 需要有 "Agent" 權限.
@@ -69,9 +73,22 @@ docker run \
   * Node is for scripted pipelines
 
 
+# Misc
+
+## Distributed Builds
+
+`Distributed Builds` concepts require builds be executed on other nodes than the built-in node to ensure the stability of the Jenkins controller.
+* To disable build on Jenkins controller, go to "Manage Jenkins" --> "Manage Nodes and Clouds" --> choose "Build-in Node" --> click "Configure" icon --> set "Number of executors" to "0".
+* [Controller Isolation](https://www.jenkins.io/doc/book/security/controller-isolation/)
+
+## Agent to Controller Access Control
+
+* [Customizing Agent →  Controller Security](https://www.jenkins.io/doc/book/security/controller-isolation/agent-to-controller/)
+
+
 # Reference
 
-# General
+## General
 * [探索 Jenkins-CI 從認識到應用](https://ithelp.ithome.com.tw/users/20091802/ironman/925)
 
 ## Setup
@@ -83,4 +100,12 @@ docker run \
 ## Role-based Strategy
 * [Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)
 * [Jenkins - Role Based Strategy Setup](https://www.c-sharpcorner.com/article/jenkins-role-based-strategy-setup/)
+
+
+# Question
+
+* What is locable resource?
+* What is the purpose of SCM permission?
+* What is the difference b/w Node roles and Item roles?
+
 
