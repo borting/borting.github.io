@@ -10,7 +10,7 @@ image: Wuling.jpg
 因為工作需求, 用 Docker container 建了一個 Jenkins service 作為自己測試 Jenkins 功能的 test server.
 這裡紀錄一下步驟.
 
-# Run Jenkins Service
+# Setup Jenkins Service on Docker Container
 
 * Download [Jenkins image](https://hub.docker.com/r/jenkins/jenkins) from DockerHub.
 ```shell
@@ -32,7 +32,9 @@ docker run \
 	jenkins/jenkins:lts-jdk11
 ```
 
-* Access Jenkins Web from `http://127.0.0.1:8080/` and you need to enter password, which can be found at `$HOME/jenkins/jenkins_home/secrets/initialAdminPassword`.
+* Access Jenkins Web from `http://127.0.0.1:8080/`
+
+* At first login, you need to enter password, which can be found at `$HOME/jenkins/jenkins_home/secrets/initialAdminPassword`.
 
 # Plugins
 
