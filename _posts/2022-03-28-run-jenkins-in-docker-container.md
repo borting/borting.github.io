@@ -98,6 +98,22 @@ Global roles:
 
 Jenkins Controller 的實際管理者需要有 `manager` 的權限
 
+## TODO
+* Study how to use "Item roles" and "Node roles"
+
+
+
+# What is Job
+
+Type:
+* Free-Style Job
+* Multi-Configuration Job
+* Pipeline (Scripted Pipeline & Declarative Pipeline)
+* Multibranch Pipeline
+
+
+
+
 
 
 
@@ -169,6 +185,21 @@ java -jar agent.jar -jnlpUrl http://172.21.35.148:8080/computer/Archer/jenkins-a
 
 
 
+# Credential
+
+## Configure Credential for GitHub
+
+* Create ssh keys
+```shell
+ssh-keygen -t rsa
+```
+
+* 把產生的 public key 放到 github project 的 "repository settings" --> "Deploy keys" --> "Add deploy key"
+
+* Go to `http://JENKINS_IP:PORT/credentials/store/system/domain/_/newCredentials`, 將 private key 新增到 Jenkins
+  * `Kind` select `SSH username with private key`
+  * `Scope` select `Global (Jenkins, node, ...)`
+  * 
 
 # Misc
 
@@ -188,7 +219,20 @@ java -jar agent.jar -jnlpUrl http://172.21.35.148:8080/computer/Archer/jenkins-a
 例如 Jenkins master/slave, 轉成叫中性的 Jenkins controller 和 Jenkins node/agent.
 在看文件時可以注意.
 
+# Agent 和 Node 差異
 
+* 參考 [Jenkins Glossary](https://www.jenkins.io/doc/book/glossary/)
+  * Agent: An agent is typically a machine, or container, which connects to a Jenkins controller and executes tasks when directed by the controller.
+  * Node: A machine which is part of the Jenkins environment and capable of executing Pipelines or Projects. Both the Controller and Agents are considered to be Nodes.
+
+* Agent 是可執行 job/pipeline 的單位, 可以在實體機器上或是 VM 上.
+* Agent 是 cloud 上的 VM 的話就可以被 dynamic provisioning and allocation
+* Label 管理的是 Agent 而非 Node
+
+* Node 和 Agent 最大的差異就是 Node 除了 agents 外, 包含了 controller.
+但多數時候, controller 不執行 job/pipeline.
+所以 Node 和 Agent 兩個詞基本上可以互換.
+  
 
 
 
@@ -219,12 +263,15 @@ java -jar agent.jar -jnlpUrl http://172.21.35.148:8080/computer/Archer/jenkins-a
 ## Role-based Strategy
 * [Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)
 * [Jenkins - Role Based Strategy Setup](https://www.c-sharpcorner.com/article/jenkins-role-based-strategy-setup/)
+* [保密防諜 - Jenkins 簡而易懂的人員管理](https://ithelp.ithome.com.tw/articles/10157951)
 
 ## Agent Management
 
 * [Jenkins : Distributed builds](https://wiki.jenkins.io/display/JENKINS/Distributed+builds)
 
+## Credential
 
+* [SSH authentication between GitHub and Jenkins]()https://medium.com/appgambit/d873dd138db0
 
 
 # Question
