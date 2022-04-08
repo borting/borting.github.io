@@ -165,26 +165,6 @@ java -jar agent.jar -jnlpUrl http://172.21.35.148:8080/computer/Archer/jenkins-a
 
 
 
-
-
-
-
-
-
-
-# Jenkins Runtime Unit
-
-* Node 和 agent (以前稱 slave) 都是 Jenkins 來執行 jobs 的實體 (server, etc.).
-  * Agent is for declarative pipelines
-  * Node is for scripted pipelines
-
-
-
-* Jenkins server will dispatch job to these node automatically according to the job configuration and node labels.
-
-
-
-
 # Credential
 
 ## Configure Credential for GitHub
@@ -200,6 +180,43 @@ ssh-keygen -t rsa
   * `Kind` select `SSH username with private key`
   * `Scope` select `Global (Jenkins, node, ...)`
   * Check `Private Key` and add private key generated in previous step
+
+
+
+
+
+
+
+
+# Jenkins Runtime Unit
+
+* Node 和 agent (以前稱 slave) 都是 Jenkins 來執行 jobs 的實體 (server, etc.).
+  * Agent is for declarative pipelines
+  * Node is for scripted pipelines
+
+* Jenkins server will dispatch job to these node automatically according to the job configuration and node labels.
+
+## Agent 和 Node 差異
+
+* 參考 [Jenkins Glossary](https://www.jenkins.io/doc/book/glossary/)
+  * Agent: An agent is typically a machine, or container, which connects to a Jenkins controller and executes tasks when directed by the controller.
+  * Node: A machine which is part of the Jenkins environment and capable of executing Pipelines or Projects. Both the Controller and Agents are considered to be Nodes.
+
+* Agent 是可執行 job/pipeline 的單位, 可以在實體機器上或是 VM 上.
+* Agent 是 cloud 上的 VM 的話就可以被 dynamic provisioning and allocation
+* Label 管理的是 Agent 而非 Node
+
+* Node 和 Agent 最大的差異就是 Node 除了 agents 外, 包含了 controller.
+但多數時候, controller 不執行 job/pipeline.
+所以 Node 和 Agent 兩個詞基本上可以互換.
+
+
+
+
+
+
+
+
 
 # Misc
 
@@ -219,19 +236,6 @@ ssh-keygen -t rsa
 例如 Jenkins master/slave, 轉成叫中性的 Jenkins controller 和 Jenkins node/agent.
 在看文件時可以注意.
 
-# Agent 和 Node 差異
-
-* 參考 [Jenkins Glossary](https://www.jenkins.io/doc/book/glossary/)
-  * Agent: An agent is typically a machine, or container, which connects to a Jenkins controller and executes tasks when directed by the controller.
-  * Node: A machine which is part of the Jenkins environment and capable of executing Pipelines or Projects. Both the Controller and Agents are considered to be Nodes.
-
-* Agent 是可執行 job/pipeline 的單位, 可以在實體機器上或是 VM 上.
-* Agent 是 cloud 上的 VM 的話就可以被 dynamic provisioning and allocation
-* Label 管理的是 Agent 而非 Node
-
-* Node 和 Agent 最大的差異就是 Node 除了 agents 外, 包含了 controller.
-但多數時候, controller 不執行 job/pipeline.
-所以 Node 和 Agent 兩個詞基本上可以互換.
   
 
 
