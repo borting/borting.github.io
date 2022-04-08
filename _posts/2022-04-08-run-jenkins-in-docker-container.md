@@ -103,7 +103,11 @@ Jenkins Controller 的實際管理者需要有 `manager` 的權限
 
 
 
-# What is Job
+
+
+# Job
+
+## What is Job
 
 Type:
 * Free-Style Job
@@ -111,13 +115,32 @@ Type:
 * Pipeline (Scripted Pipeline & Declarative Pipeline)
 * Multibranch Pipeline
 
+## Add a Job for Github
+
+* Go to `http://JENKINS_IP:PORT/view/all/newJob`, enter job name and choose `Freestyle projecta`
+* Setup `Discard old builds`
+
+* Check `Execute concurrent builds if necessary` 允許同時有多個 executor 執行 build queue 裡的 task, 預設 build queue 裡的 task 是一次只執行一個
+* Check `Restrict where this project can be run` 用 Label 設定可以被哪些 agent group 執行.
+* Check `Source Code Management` --> `Git`
+  * `Repository URL`: add url for ssh clone
+  * `Credentials`: choose a crendential of which public key has been uploaded to Github project.
 
 
 
 
 
 
-# Agent and Job Work
+
+
+
+
+
+
+
+
+
+# Agent
 
 假設一個擁有 `Agent` 和 `Job` 所有權限的管理者, 這裡說明他可以對 Jenkins Controller 的操作.
 
@@ -176,9 +199,11 @@ ssh-keygen -t rsa
 
 * 把產生的 public key 放到 github project 的 "repository settings" --> "Deploy keys" --> "Add deploy key"
 
-* Go to `http://JENKINS_IP:PORT/credentials/store/system/domain/_/newCredentials`, 將 private key 新增到 Jenkins
+* Go to `http://JENKINS_IP:PORT/credentials/store/system/domain/_/`, 將 private key 新增到 Jenkins
   * `Kind` select `SSH username with private key`
   * `Scope` select `Global (Jenkins, node, ...)`
+  * `ID` give any name for key management
+  * `Username` add user name for added ssh credential
   * Check `Private Key` and add private key generated in previous step
 
 
@@ -236,10 +261,11 @@ ssh-keygen -t rsa
 例如 Jenkins master/slave, 轉成叫中性的 Jenkins controller 和 Jenkins node/agent.
 在看文件時可以注意.
 
-  
+## Git Checkout
 
-
-
+* 不 checkout 的方法, 使用 `skipDefaultCheckout`
+  * [Set a Jenkins job to not to clone the repo in SCM](https://devops.stackexchange.com/a/1074)
+  * [Pipeline Syntax](https://www.jenkins.io/doc/book/pipeline/syntax/)
 
 
 
@@ -277,6 +303,9 @@ ssh-keygen -t rsa
 
 * [SSH authentication between GitHub and Jenkins]()https://medium.com/appgambit/d873dd138db0
 
+## Github
+
+* [How to Integrate Your GitHub Repository to Your Jenkins Project](https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
 
 # Question
 
