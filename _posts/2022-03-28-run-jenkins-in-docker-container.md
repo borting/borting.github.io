@@ -199,7 +199,7 @@ ssh-keygen -t rsa
 * Go to `http://JENKINS_IP:PORT/credentials/store/system/domain/_/newCredentials`, 將 private key 新增到 Jenkins
   * `Kind` select `SSH username with private key`
   * `Scope` select `Global (Jenkins, node, ...)`
-  * 
+  * Check `Private Key` and add private key generated in previous step
 
 # Misc
 
