@@ -240,6 +240,13 @@ ssh-keygen -t rsa
 
 
 
+# Fast Links
+
+* Create new job: `http://JENKINS_IP:PORT/view/all/newJob`
+* List node: `http://JENKINS_IP:PORT/computer/`
+* List credentials: `http://JENKINS_IP:PORT/credentials/store/system/domain/_/`
+
+
 
 
 
@@ -307,10 +314,27 @@ ssh-keygen -t rsa
 
 * [How to Integrate Your GitHub Repository to Your Jenkins Project](https://www.blazemeter.com/blog/how-to-integrate-your-github-repository-to-your-jenkins-project)
 
+
+
+
+
 # Question
 
 * What is locable resource?
 * What is the purpose of SCM permission?
 * What is the difference b/w Node roles and Item roles?
+
+
+
+
+
+# TODO
+
+* [How to move Jenkins Build Record Root Directory](https://stackoverflow.com/questions/49012129/how-to-move-jenkins-build-record-root-directory)
+
+* Clean `@tmp` folders
+  * [Why Jenkins mounts a temporary volume in addition to the workspace?](https://stackoverflow.com/questions/59220020/why-jenkins-mounts-a-temporary-volume-in-addition-to-the-workspace)
+  * [What are the @tmp folders in a Jenkins workspace and how to clean them up](https://stackoverflow.com/questions/58588794/what-are-the-tmp-folders-in-a-jenkins-workspace-and-how-to-clean-them-up)
+
 
 
