@@ -45,7 +45,7 @@ Go to `Dashboad` --> "Configure Global Security" --> set `TCP port for inbound a
 
 Install plugins:
 * Go to "Manage Jenkins" --> "Manage Plugins"
-* Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)", "[Gerrit Trigger](https://plugins.jenkins.io/gerrit-trigger/)"
+* Install "[Role-based Authorization Strategy](https://plugins.jenkins.io/role-strategy/)", "[Locale](https://plugins.jenkins.io/locale/)", "[Gerrit Trigger](https://plugins.jenkins.io/gerrit-trigger/)", "[REPO](https://plugins.jenkins.io/repo/)"
 
 ## Role-based Authotization
 
