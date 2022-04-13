@@ -1,17 +1,22 @@
 ---
 layout: post
-title: "Set Upstream while Push Git Branch to Remote"
+title: "Push Git Branch to Remote and Set upstream"
 author: "Borting"
 categories: journal
 tags: [Git]
 image: plum.jpg
 ---
 
-把 local 的 branch push 到 remote 後, 同常也會同步設定將 local 的 branch 的 upstream 設成 remote branch.
+把 local 的 branch push 到 remote 後, 通常也會同步設定將 local 的 branch 的 upstream 設成 remote branch.
 這樣之後 fetch/pull 時就會自動更新.
 以下紀錄作法.
 
-# Set Upstream
+# Set Upstream for a Branch
+
+* 在第一次 push 到 remote 時直接設定 upstream
+```shell
+git push -u REMOTE_NAME LOCAL_BRANCH_NAME[:REMOTE_BRANCH_NAME]
+```
 
 * 若 local branch 已經 push 到 remote, 可以額外下指令設定 upstream.
 ```shell
@@ -19,12 +24,24 @@ git push REMOTE_NAME LOCAL_BRANCH_NAME
 git branch --set-upstream-to=REMOTE_NAME/REMOTE_BRANCH_NAME LOCAL_BRANCH_NAME
 ```
 
-* 也可以在第一次 push 時直接設定 upstream
+# Push Changes to Upstream
+
+當 upstream 已經設定後, 可以透過已下兩種方式 push 到 remote
+
+* 先 checkout branch 再 push
 ```shell
-git push -u REMOTE_NAME LOCAL_BRANCH_NAME[:REMOTE_BRANCH_NAME]
+git checkout BRANCH_NAME
+git push
 ```
 
-# Set Merge Rule on a Specific Branch
+* 若不先 checkout branch, 則要輸入 remote name
+```shell
+git push REMOTE_NAME BRANCH_NAME
+```
+
+# Pull Changes from upstream
+
+## Set Merge Rule for a Branch
 
 * 當從 remote pull 下來時, 可以設定 branch 只能走 fast-forward merge
 ```shell
@@ -36,16 +53,16 @@ git config branch.BRANCH_NAME.mergeOptions --ff-only
     mergeOptions = --ff-only
 ```
 
-# Set Global Pull Rule
+## Set Global Pull Rule
 
 * Use rebase as default pull merge rule
 ```shell
 git config --global pull.rebase true
 ```
 
-# Ignore Merging Commit and 
+## Ignore Merging Commit and Rebase
 
-* Git default pull.rebase 為 false, 此時 pull 後會採用 merge 方式, 後 local 的 commit 產生一個新的 merge commit
+* 因為 git 預設 pull.rebase 為 false, 此時 pull 後會採用 merge 方式, pull 後 local branch 的 commit 產生一個新的 merge commit
 * 如果 git pull 後, 產生一個新的 merge commmit, 但此時 remote 又有新的 commit 時, 此時 push 會失敗.
 解決方法
 ```shell
@@ -57,3 +74,4 @@ git rebase −p REMOTE_NANE/REMOTE_BRANCH_NAME
 * [How do I push a new local branch to a remote Git repository and track it too?](https://stackoverflow.com/a/6232535)
 * [Enforce fast forward as merge strategy in Git](https://code-maven.com/enforce-fast-forward-as-merge-strategy)
 * [Git - When to Merge vs. When to Rebase](https://www.derekgourlay.com/blog/git-when-to-merge-vs-when-to-rebase/)
+* [Git Push to Remote Branch – How to Push a Local Branch to Origin](https://www.freecodecamp.org/news/git-push-to-remote-branch-how-to-push-a-local-branch-to-origin/)
