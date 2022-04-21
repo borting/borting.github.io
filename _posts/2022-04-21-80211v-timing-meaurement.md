@@ -1,20 +1,14 @@
 ---
 layout: post
-title: "802.11 Indoor Positioning"
+title: "802.11 Timing Measurement"
 author: "Borting"
 categories: journal
 tags: [IEEE80211]
 image: rocks.jpg
 ---
 
-這篇紀錄一下 IEEE 802.11 (Wi-Fi) 的室內定位技術 (Indoor Positioning).
-
-# Revolution
-
-發展順序:
-1. RSSI-based positioning
-2. 802.11mc Fine Timing Measurement (FTM): 借用 802.11v Timing Measurement 引入的 Time of Flight 技術實現
-3. 802.11az Next Generation Positioning (NGP): 強化 FTM 的隱蔽性與準確度
+IEEE 802.11 (Wi-Fi) 的室內定位技術 (Indoor Positioning) 是利用 (1) time synchrnoization 與 (2) 電磁波的傳輸速度是定值來達成的.
+這篇先介紹定義在 802.11v 的 time synchronization 方式: timing measurement.
 
 # Introduction
 
