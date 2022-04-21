@@ -115,5 +115,7 @@ Extended Capabilities element 會帶在下列 frames 中:
 * SME (station management entity)
 * MLME (MAC sublayer management entity)
 * PLME (PHY sublayer management entity)
+* ToA (Time of Arrival)
+* ToD (Time of Departure)
 
 # Reference
