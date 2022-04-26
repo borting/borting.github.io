@@ -49,6 +49,18 @@ During the measurement procedure:
 Both frames are public action frames.
 
 
+Types of frames involved in the ranging procedure:
+* Initial Fine Timing Measurement Request frame
+	* Trigger field: 1
+	* Fine Timing Measurement Parameters element which describes the initiating STA’s availability
+* Fine Timing Measurement Request frame
+* Initial Fine Timing Measurement frame
+	* Respond in 10ms (10^-3 sec)
+	* Status Indication field
+	* Fine Timing Measurement Parameters element
+* Fine Timing Measurement frame
+* Ack
+
 ## Negotiation Phase
 
 ### Step 1
@@ -62,14 +74,106 @@ The responding STA should transmit a Fine Timing Measurement frame within 10 ms 
 The first Fine Timing Measurement frame in the FTM session is called the initial Fine Timing Measurement frame, of which
 * Fine Timing Measurement Parameters element
 	* Format and Bandwidth field should be same as that of the initiating STA if supported or narrower bandwidth.
+	* ASAP capable field
 	* ASAP field
-		* A responding STA that is an AP shall support and select non-ASAP operation, and so does the initiating STA shall support non-ASAP operation
-		* A responding STA that is not an AP shall support and select ASAP operation, and so does the initiating STA shall support ASAP operation
+		* A responding STA that is an AP
+			* shall support and select non-ASAP operation, if the initiating STA requests non-ASAP operation
+			* can select ASAP/non-ASAP, if the initiating STA requests ASAP operation. And the initiating STA must select non-ASAP, if the responding STA responds to do so.
+			* If a responding STA is ASAP capable, the responding STA should select ASAP as that requested by the initiating STA.
+		* A responding STA that is a non-AP
+			* shall support and select ASAP operation, if the initiating STA request ASAP operation
+			* can select ASAP/non-ASAP, if the initiating STA requests non-ASAP operation. And the initiating STA must select ASAP, if the responder STA responds to do so.
+	* FTMs per Burst
+		* be the same as the one requested by the initiating STA if the requested value of the Burst Duration field is 15 (no preference) 
+	* Burst Period: responding STA’s selection shall be greater than or equal the responding STA’s selection of Burst Duration
+		
 
-## Measurement Exchange
+## Measurement Exchange Phase
 
+A burst instance is a period in which Fine Timing Measurement frames are sent.
+The timing is defined by:
+* Partial TSF Time
+* Burst Duration
+* Burst Period
+
+The first burst instance shall start at the value indicated by the value of the Partial TSF Timer field in the initial Fine Timing Measurement frame, regardless of the ASAP field’s value.
+If ASAP is set to 1 by the responding STA, the Partial TSF Timer field value shall be set to a value less than 10 ms from the reception
+
+### Step1
+
+initiating STA shall transmit a Fine Timing Measurement Request frame
+* Trigger 1
+* w/o Measurement Request element
+* w/o Fine Timing Measurement Parameters element
+
+### Step2
+
+responding STA sends an ack, then starts to sends FTM framesa
+
+The first Fine Timing Measurement frame and its retransmissions in the burst instance should include an FTM Synchronization Information element.
+	* The TSF Sync Info field might be used by the initiating STA to synchronize its TSF with the responding STA 
+
+Subsequent FTM frames within the burst instance shall not include a Fine Timing Measurement Parameters element and shall not include an FTM Synchronization Information field
+
+If a Fine Timing Measurement frame is sent outside a burst instance, it might not be acknowledged.
+
+Fine Timing Measurement frames shall not be transmitted in DSSS (802.11-1997), HR/DSSS (802.11b), [HT Duplicate (MCS 32)](https://www.cwnp.com/ht-duplicate-mcs-32-and-non-ht-duplicate/) format, or HT-greenfield format
+
+A responding STA that transmits a Fine Timing Measurement frame with the ASAP field set to 0
+* Set Partial TSF Timer field to an offset value D TSF from the partial value of the responding STA’s TSF timer at the time of the transmission of the Ack to the last Fine Timing Measurement Request frame
+
+
+If (1) not received Ack for initial Fine Timing Measurement frame, (2) nor received Fine Timing Measurement Request frame,
+the responding STA shall not terminate the FTM session before the time indicated by the Partial TSF timer plus the Burst Duration
+
+A responding STA set the Dialog Token field to 0 in the last Fine Timing Measurement frame and its FTM retransmissions
+
+### Step3
+
+The initiating STA may perform FTM on the last Fine Timing Measurement frame in a burst instance. (最後一個可以不計算 FTM)
+#### Calculation
+Round Trip Time (RTT):
+```
+RTT = [(t4' – t1') – (t3 – t2)]
+```
+
+SME at the initiating STA may estimate the offset of the local clock relative to that at the responding STA
+```
+clock offset = [(t2 - t1') - (t4' - t3)]/2
+```
+
+#### FTM retransmission
+
+If the Ack frame for a transmitted Fine Timing Measurement frame is not received, the responding STA shall not retry the frame.
+
+The responding STA shall send a Fine Timing Measurement frame with the same Action frame body as the Fine Timing Measurement frame for which the Ack was not received, except:
+* updating the Dialog Token if it was nonzero.
+* updating Sequence Number in the MAC header
+
+
+#### FTM Modification
+
+如果 iSTA sent a Fine Timing Measurement Request frame with
+* Trigger field set to 1
+* including a new Fine Timing Measurement Parameters element
+This means current FTM session is terminated and shall use new parameters
+
+## Termination Phase
+
+* Case 1: ended after the last burst instance
+* Case 2: responding STA sends a Fine Timing Measurement frame with the Dialog Token field set to 0
+* Case 3: initiating STA sends a Fine Timing Measurement Request frame with the Trigger field set to 0 (not include Measurement Request element nor Fine Timing Measurement Parameters element)
+* Case 4: initiating STA sends a Fine Timing Measurement Request frame with the Trigger field set to 1 and includes a new Fine Timing Measurement Parameters element
+
+
+# LCI and Location Civic retrieval
+
+???
 
 # Fine Timing Measurement Range Report
+
+
+???
 
 # Related Sections in IEEE 802.11mc
 
@@ -128,25 +232,42 @@ The first Fine Timing Measurement frame in the FTM session is called the initial
 * 9.4.2.168 Fine Timing Measurement Parameters element
 	* Element ID: 206
 	* This element is included in the initial Fine Timing Measurement Request frame and the initial Fine Timing Measurement frame.
+	* Value
+		* If Status Indication field is 3, indicates not send new request for Value seconds.
 	* Number of Bursts Exponent field:
 		* Will execute 2 ^ (Number of Bursts Exponent) burst instance
+		* The responding STA’s selection should be 0 if the initiating STA requested it to be 0
 	* Burst Duration field
-		*the duration of a burst instance
+		* the duration of a burst instance
+		* Initial FTM request
+			* 15: no preference
+		* responding STA’s selection
+			* less than or equal to the one requested by the initiating STA, if the requested FTMs per Burst field value is set to 0 (no preference), and subjeced to the following min and max
+			* (min) if the Number of Bursts Exponent field is set to 0 and the ASAP field is set to 1: (See Figure 11-37)
+				BD1 = ((N_FTMPB * (K + 1)) – 1) * T_MDFTM + T_FTM + aSIFSTime + T_Ack
+			* (max) otherwise
+				BD >= BD1 + T_FTMR + aSIFSTime + T_Ack + T_ACCESS_FTM
 	* Min Delta FTM field
 		* minimum time between consecutive Fine Timing Measurement frames, in units of 100 μs
+		* responding STA’s selection should greater than or equal to that of the initiating STA
 	* Partial TSF Timer field
 	* Partial TSF Timer No Preference field
-	* ASAP Capable field: the responding STA is capable of sending a Fine Timing Measurement frame as soon as possible
+	* ASAP Capable field:
+		* the responding STA is capable of sending a Fine Timing Measurement frame as soon as possible
+		* reserved in the initial Fine Timing Measurement Request frame
 	* ASAP field: the initiating STA’s request to start the first burst instance of the FTM session as soon as possible
 	* FTMs per Burst field
 		* how many successfully transmitted Fine Timing Measurement frames per burst instance
 	* Format And Bandwidth field
 		* See Table 9-258
 	* Burst Period field
-		* the interval between two consecutive burst instances, in units of 100 ms
+		* The interval from the beginning of one burst instance to the beginning of the following burst instance, in units of 100 ms
+		* 0 indicates no preference by the initiating STA
+		* reserved when the Number of Bursts Exponent field is set to 0
 * 9.4.2.173 FTM Synchronization Information element
 	* Element ID: 255
 	* Element ID Extension: 9
+	* TSF Sync Info field: the 4 least significant bytes of the value of TSF, initiating STA might uses this to sync TSF w/ responding STA to determine the start of next burst instanceExponent
 
 ## SME-MLME SAP
 * 6.3.58 Fine timing measurement (FTM)
