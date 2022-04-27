@@ -31,14 +31,14 @@ And how the session works is negotiated and determined by
 
 
 The FTM procedure provides 4 mechanisms for measurement exchange:
-* EDCA based exchange of Fine Timing Measurement frames
+* EDCA based ranging measurement exchange
 	* location estimates are based on ToD and ToA of the exchanged FTM frames and their corresponding Ack
-* Trigger based (TB) measurement
+* Trigger based (TB) ranging measurement exchange
 	* location estimates are based on the execution of the trigger based measurement exchange
 	* allows for the execution of the measurement exchange between a responding STA (RSTA) and multiple initiating STAs (ISTAs) at the same time
-* Non-Trigger based (non-TB) measurement
+* Non-Trigger based (non-TB) measurement exchange
 	* location estimates are based on the execution of the non-TB measurement exchange
-* Passive triggered based (TB) Ranging measurement
+* Passive triggered based (TB) Ranging measurement exchange
 	* determine its location based on periodic measurement reports from other STAs that execute the passive TB ranging measurement exchange amongst themselves
 
 Optionally enable security parameters enabling mechanisms to ensure that the measurement exchange is executed with the intended peer:
@@ -47,20 +47,7 @@ Optionally enable security parameters enabling mechanisms to ensure that the mea
 * Non-Trigger based (non-TB) measurement
 
 
-# Preassociation Security Negotiation
-
-PASN authentication allows association by establishing a PTKSA using authentication frames.
-This enables the exchange of protected frames without association
-For example, two unassociated peers can establish a secure FTM session and perform the corresponding secure measurement exchange between each other.
-
-
-PASN authentication is used 
-* in an RSN for an infrastructure BSS when it is based on a PMKSA established by another RSN authentication protocol
-* Otherwise, it does not guarantee mutual authentication, and can be used as a non-RSN protocol in an infrastructure BSS
-
-
-# EDCA-based Ranging Measurement
-
+# Measurement Procedure
 
 A STA might have multiple concurrent FTM sessions, of which corresponding responding STA may outside of the current BSS/ESS.
 
@@ -96,6 +83,9 @@ Types of frames involved in the ranging procedure:
 * Fine Timing Measurement frame
 * Ack
 
+# EDCA-based Ranging Measurement
+
+
 ## Negotiation Phase
 
 ### Step 1
@@ -103,6 +93,11 @@ An initiating STA shall transmit a Fine Timing Measurement Request frame.
 This frame called the initial Fine Timing Measurement Request frame, of which
 * Trigger field set to 1
 * a set of scheduling parameters in a Fine Timing Measurement Parameters element (Section 9.4.2.168 Fine Timing Measurement Parameters element)
+* Format and Bandwidth field
+	* ISTA shall indicate an EDCA based HE format only if
+		* STAs are operating in the 6 GHz band
+		* at least one of the STAs does not support TB or does not support non-TB ranging
+	* Otherwise, a WIFI6 ISTA shall not indicate an EDCA based HE format
 
 ### Step 2
 The responding STA should transmit a Fine Timing Measurement frame within 10 ms in response to the initial Fine Timing Measurement Request frame.
@@ -210,6 +205,32 @@ This means current FTM session is terminated and shall use new parameters
 
 ???
 
+# Preassociation Security Negotiation
+
+PASN authentication allows association by establishing a PTKSA using authentication frames.
+This enables the exchange of protected frames without association
+For example, two unassociated peers can establish a secure FTM session and perform the corresponding secure measurement exchange between each other.
+
+
+PASN authentication is used 
+* in an RSN for an infrastructure BSS when it is based on a PMKSA established by another RSN authentication protocol
+* Otherwise, it does not guarantee mutual authentication, and can be used as a non-RSN protocol in an infrastructure BSS
+
+
+A secure fine timing measurement session is established when an ISTA and an RSTA establish a PTKSA and use it to exchange proteced action frames in the session.
+The proected action frames includes:
+* IFTMR
+* Protected Fine Timing Measurement Request Action frame
+* Protected Fine Timing Measurement Action frame
+* IFTM frame in the Protected Fine Timing Frame Action format
+
+IFTMR is not protected ???
+
+A secure fine timing measurement session can only established with the following measurement exchange:
+* a TB ranging measurement exchange
+* a non-TB ranging measurement exchange
+* an EDCA based ranging measurement exchange with a Format And Bandwidth field indicating DMG or EDMG format 
+
 # Related Sections in IEEE 802.11mc
 
 ## Description
@@ -293,6 +314,7 @@ This means current FTM session is terminated and shall use new parameters
 	* ASAP field: the initiating STA’s request to start the first burst instance of the FTM session as soon as possible
 	* FTMs per Burst field
 		* how many successfully transmitted Fine Timing Measurement frames per burst instance
+		* 0 indicates no preference by the initiating STA
 	* Format And Bandwidth field
 		* See Table 9-258
 	* Burst Period field
@@ -323,8 +345,15 @@ This means current FTM session is terminated and shall use new parameters
 
 # Related Sections in IEEE 802.11az
 
+## Description
+* 11.21.6.4.2 EDCA based ranging measurement exchange
+* 11.21.6.4.3 TB ranging measurement exchange
+* 11.21.6.4.4 Non-TB ranging measurement exchange
+* 11.21.6.4.8 Passive TB ranging measurement exchange
 
 ## Element Format 
+* 9.4.2.167 Fine Timing Measurement Parameters element
+	* Element ID: 206
 * 9.4.2.296 ISTA Availability Window
 	* Element ID: 255
 	* Element ID Extension: 98
@@ -363,7 +392,9 @@ This means current FTM session is terminated and shall use new parameters
 	* Element ID Extension: 105
 
 
+## Frame format
 
+* 9.6.34 Protected Fine Timing Action Frame
 
 
 
