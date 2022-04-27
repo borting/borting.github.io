@@ -36,9 +36,9 @@ The FTM procedure provides 4 mechanisms for measurement exchange:
 * Trigger based (TB) ranging measurement exchange
 	* location estimates are based on the execution of the trigger based measurement exchange
 	* allows for the execution of the measurement exchange between a responding STA (RSTA) and multiple initiating STAs (ISTAs) at the same time
-* Non-Trigger based (non-TB) measurement exchange
+* Non-Trigger based (non-TB) ranging measurement exchange
 	* location estimates are based on the execution of the non-TB measurement exchange
-* Passive triggered based (TB) Ranging measurement exchange
+* Passive triggered based (TB) ranging measurement exchange
 	* determine its location based on periodic measurement reports from other STAs that execute the passive TB ranging measurement exchange amongst themselves
 
 Optionally enable security parameters enabling mechanisms to ensure that the measurement exchange is executed with the intended peer:
