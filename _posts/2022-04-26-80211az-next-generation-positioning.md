@@ -196,6 +196,19 @@ This means current FTM session is terminated and shall use new parameters
 * Case 4: initiating STA sends a Fine Timing Measurement Request frame with the Trigger field set to 1 and includes a new Fine Timing Measurement Parameters element
 
 
+# TB Ranging Measurement Exchange
+
+Allows for the execution of the measurement exchange between a responding STA (RSTA) and multiple initiating STAs (ISTAs) at the same time.
+
+
+
+
+# Non-TB Ranging Measurement Exchange
+
+A ranging measurement procedure that uses NDP, and is not initiated by a Ranging Trigger frame.
+
+
+
 # LCI and Location Civic retrieval
 
 ???
@@ -231,17 +244,19 @@ A secure fine timing measurement session can only established with the following
 * a non-TB ranging measurement exchange
 * an EDCA based ranging measurement exchange with a Format And Bandwidth field indicating DMG or EDMG format 
 
-# Related Sections in IEEE 802.11mc
+# Related Sections in IEEE 802.11md
 
 ## Description
-* 4.3.18.19 Fine timing measurement
-* 11.11.2 Measurement on operating and nonoperating channels
-* 11.11.9.11 Fine Timing Measurement Range report
-* 11.24.6 Fine timing measurement (FTM) procedure
+* 4.3.19.19 Fine timing measurement
+* 11.10.2 Measurement on operating and nonoperating channels
+* 11.10.9.6 LCI report (Location configuration information report)
+* 11.10.9.9 Location Civic report
+* 11.10.9.11 Fine Timing Measurement Range report
+* 11.21.6 Fine timing measurement (FTM) procedure
 
 ## Frame format
-* 9.3.3.14 Action frame format
-* 9.6.8.32 Fine Timing Measurement Request frame format
+* 9.3.3.13 Action frame format
+* 9.6.7.32 Fine Timing Measurement Request frame format
 	* Public Action frame
 	* Category: 4
 	* Public Action field: 32
@@ -249,7 +264,7 @@ A secure fine timing measurement session can only established with the following
 	* LCI Measurement Request element (Opt.)
 	* Location Civic Measurement Request element (Opt.)
 	* Fine Timing Measurement Parameter element (Opt.)
-* 9.6.8.33 Fine Timing Measurement frame format
+* 9.6.7.33 Fine Timing Measurement frame format
 	* Category: 4
 	* Public Action field: 33
 	* Dialog Token
@@ -262,30 +277,30 @@ A secure fine timing measurement session can only established with the following
 	* FTM Synchronization Information (Opt.)
 
 ## Element Format
-* 9.4.2.45 RM Enabled Capabilities element
+* 9.4.2.44 RM Enabled Capabilities element
 	* RM Enabled Capabilities:
 		* bit 34: FTM Range Report Capability Enabled
-* 9.4.2.27 Extended Capabilities element
+* 9.4.2.26 Extended Capabilities element
 	* Extended Capabilities field
 		* bit 70: Fine Timing Measurement Responder: 1, if supports FTM as a responder
 		* bit 71: Fine Timing Measurement Initiator: 1, if supports FTM as a initiator
-* 9.4.2.21 Measurement Request element
+* 9.4.2.20 Measurement Request element
 	* Element ID: 38
-	* 9.4.2.21.10 LCI request (Location configuration information request)
+	* 9.4.2.20.10 LCI request (Location configuration information request)
 		* Measurement Type: 8
-	* 9.4.2.21.14 Location Civic request
+	* 9.4.2.20.14 Location Civic request
 		* Measurement Type: 11
-	* 9.4.2.21.19 Fine Timing Measurement Range request
+	* 9.4.2.20.19 Fine Timing Measurement Range request
 		* Measurement Type: 16
-* 9.4.2.22 Measurement Report element
+* 9.4.2.21 Measurement Report element
 	* Element ID: 39
-	* 9.4.2.22.10 LCI report (Location configuration information report)
+	* 9.4.2.21.10 LCI report (Location configuration information report)
 		* Measurement Type: 8
-	* 9.4.2.22.13 Location Civic report
+	* 9.4.2.21.13 Location Civic report
 		* Measurement Type: 11
-	* 9.4.2.22.18 Fine Timing Measurement Range report
+	* 9.4.2.21.18 Fine Timing Measurement Range report
 		* Measurement Type: 16
-* 9.4.2.168 Fine Timing Measurement Parameters element
+* 9.4.2.167 Fine Timing Measurement Parameters element
 	* Element ID: 206
 	* This element is included in the initial Fine Timing Measurement Request frame and the initial Fine Timing Measurement frame.
 	* Value
@@ -321,7 +336,7 @@ A secure fine timing measurement session can only established with the following
 		* The interval from the beginning of one burst instance to the beginning of the following burst instance, in units of 100 ms
 		* 0 indicates no preference by the initiating STA
 		* reserved when the Number of Bursts Exponent field is set to 0
-* 9.4.2.173 FTM Synchronization Information element
+* 9.4.2.172 FTM Synchronization Information element
 	* Element ID: 255
 	* Element ID Extension: 9
 	* TSF Sync Info field: the 4 least significant bytes of the value of TSF, initiating STA might uses this to sync TSF w/ responding STA to determine the start of next burst instanceExponent
@@ -335,8 +350,8 @@ A secure fine timing measurement session can only established with the following
 
 ## Related
 * 11.24.4 Location track procedures
-* 6.3.55 Location configuration request
-* 6.3.56 Location track notification
+* 6.3.53 Location configuration request
+* 6.3.54 Location track notification
 
 
 
@@ -346,12 +361,24 @@ A secure fine timing measurement session can only established with the following
 # Related Sections in IEEE 802.11az
 
 ## Description
+* 4.3.19.19 Fine timing measurement
 * 11.21.6.4.2 EDCA based ranging measurement exchange
 * 11.21.6.4.3 TB ranging measurement exchange
 * 11.21.6.4.4 Non-TB ranging measurement exchange
 * 11.21.6.4.8 Passive TB ranging measurement exchange
+* 12.12 Preassociation security negotiation
 
-## Element Format 
+## Frame format
+* 9.3.1.19 VHT/HE/Ranging NDP Announcement frame format
+* 9.3.1.22 Trigger frame format
+* 9.6.6.6 Neighbor Report Request frame format
+* 9.6.7.49 Location Measurement Report (LMR) frame format
+* 9.6.7.50 ISTA Passive TB Ranging Measurement Report frame format
+* 9.6.7.51 Primary RSTA Broadcast Passive TB Ranging Measurement Report frame format
+* 9.6.7.52 Secondary RSTA Broadcast Passive TB Ranging Measurement Report frame format
+* 9.6.34 Protected Fine Timing Frame details
+
+## Element Format
 * 9.4.2.167 Fine Timing Measurement Parameters element
 	* Element ID: 206
 * 9.4.2.296 ISTA Availability Window
@@ -391,6 +418,10 @@ A secure fine timing measurement session can only established with the following
 	* Element ID: 255
 	* Element ID Extension: 105
 
+## SME-MLME SAP
+* 6.3.5 Authenticate
+* 6.3.56 Fine timing measurement (FTM)
+
 
 ## Frame format
 
@@ -412,6 +443,8 @@ A secure fine timing measurement session can only established with the following
 
 
 # Implementation Concern
+
+* Can A RSTA support EDCA-based, TB, and non-TB at the same time?
 
 # Glossary
 
@@ -440,5 +473,13 @@ A secure fine timing measurement session can only established with the following
 * LMR (location measurement report)
 * PSTOA (phase shift time of arrival)
 * RSID (ranging session Identifier)
+* AOA (angle of arrival)
+* AOD (angle of departure)
+* STS (space-time string)
+* TSF (Timing synchronization function)
+* DMG (Directional Multi-Gigabit)
+* EDMG (Enhanced Directional Multi-Gigabit)
+* LTF (Long Training Field)
+
 
 # Reference
