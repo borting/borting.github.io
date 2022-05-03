@@ -200,13 +200,42 @@ This means current FTM session is terminated and shall use new parameters
 
 Allows for the execution of the measurement exchange between a responding STA (RSTA) and multiple initiating STAs (ISTAs) at the same time.
 
+Availability window --> similar to burst instance in EDCA based ranging
 
+ISTAs can measure time of arrivals of each other’s ranging NDPs
 
+## Negotiation
+
+ISTA indicates its availability to start the measurement exchange by responding to the Poll Ranging Trigger from the RSTA
+
+IFTM shall include a Ranging Parameter element containing TB Specific subelement
+The TB specific element
+* ISTA Availability Window element
 
 # Non-TB Ranging Measurement Exchange
 
 A ranging measurement procedure that uses NDP, and is not initiated by a Ranging Trigger frame.
 
+An availability window instance is negotiated, during whch the ISTA may come to the channel at any time and use contention based access to initiate a new measurement exchange.
+
+IFTM shall include a Ranging Parameter element containing non-TB Specific subelement
+
+# Passive TB Ranging Measurement Exchange
+
+Passive TB ranging is a variant of the TB ranging mode.
+passive TB ranging mode consists of ranging exchanges between an RSTA and a set of ISTAs
+
+estimate its differential distances to the pairs of RSTAs and/or ISTAs.
+
+Passive TB ranging mode follows the rules for TB ranging mode, except
+* not use protected management frames and secure LTF.
+* secure version of TB ranging does not apply to passive TB ranging
+* RSTA uses the Ranging Trigger frame of subtype passive TB ranging for its sounding trigger frames
+* ISTAs use HE Ranging NDPs for its I2R NDPs
+* ISTAs do not use the LMR frame for reporting of I2R LMR but instead uses the ISTA Passive TB Ranging Measurement Report frame
+* RSTA sends the Primary and Secondary RSTA Broadcast Passive TB Ranging Measurement Report frames at the end of the measurement exchange
+* number of spatial streams (NSTS) for passive TB ranging is limited to 4
+* If phase shift feedback is negotiated for passive TB ranging, both the RSTA and the ISTA measures and reports PSTOAs
 
 
 # LCI and Location Civic retrieval
@@ -243,6 +272,42 @@ A secure fine timing measurement session can only established with the following
 * a TB ranging measurement exchange
 * a non-TB ranging measurement exchange
 * an EDCA based ranging measurement exchange with a Format And Bandwidth field indicating DMG or EDMG format 
+
+
+MFPC and MFPR determines whether PTKSA between RSTA and ISTA should be established
+
+How to establish a PTKSA
+* If the ISTA and the RSTA are associated
+	* PTKSA
+	* 4-way handshake
+	* FILS authentication protocol
+	* FT Protocol
+* If the ISTA and the RSTA are not associated
+	* Preassociation Security Negotiation
+
+What types of measurement exchange can apply proteced measurement
+	* TB ranging
+	* non-TB ranging
+	* EDCA based ranging for DMG/EDMG STA
+
+When to establish a PTKSA before initating a FTM procedure
+	* URNM-MFPR = 1
+	* URNM-MFPR = 0 and URNM-MFPR-X20 = 1 (unless 20 MHz is speified in Format and Bandwidth subfield of the Ranging Parameters field)
+
+
+
+
+# Scheduling
+
+Centric
+* ISTA centric scheduling --> Non-TB ranging
+* RSTA centric scheduling
+	* EDCA-based ranging
+	* TB ranging
+	* passive TB ranging is scheduled by the RSTA in an availability window used for passive location
+
+To announce scheduling and parameters of the availability window for passive TB ranging, RSTA includes an RSTA Availability Window element in its Beacon frame
+
 
 # Related Sections in IEEE 802.11md
 
@@ -379,17 +444,43 @@ A secure fine timing measurement session can only established with the following
 * 9.6.34 Protected Fine Timing Frame details
 
 ## Element Format
+* 9.4.2.26 Extended Capabilities element
+	* Extended Capabilities field
+		* bit 70: Fine Timing Measurement Responder: 1, if supports FTM as a responder
+		* bit 71: Fine Timing Measurement Initiator: 1, if supports FTM as a initiator
+		* bit 90: Non-TB Ranging Responder
+		* bit 91: TB Ranging Responder
+		* bit 92: Passive TB Ranginng Responder Measurement Support
+		* bit 93: Passive TB Ranging Initiator Measurement Support
+		* bit 94: AOA Measurements Available
+		* bit 95: Phase Shift Feedback Support
+			* Can be set to 1, if one of the bits in bit 90 ~ 93 is set
+		* bit 96: DMG/location supporting APs in the area
+		* bit 97: I2R LMR Feedback Policy
+			* set to 1, if LMT feedback is implemented and if bit 90 or bit 91 is set
 * 9.4.2.167 Fine Timing Measurement Parameters element
 	* Element ID: 206
+* 9.4.2.241 RSN Extension element (RSNXE)
+	* Secure LTF Support
+	* Secure RTT Supported
+	* URNM-MFPR-X20
+	* URNM-MFPR
 * 9.4.2.296 ISTA Availability Window
 	* Element ID: 255
 	* Element ID Extension: 98
-* 9.4.2.297 ISTA Availability Window
+* 9.4.2.297 RSTA Availability Window
 	* Element ID: 255
 	* Element ID Extension: 99
 * 9.4.2.298 Ranging Parameters element
 	* Element ID: 255
 	* Element ID Extension: 101
+	* Ranging Parameters
+		* sdef
+	* Ranging Subelements
+		* one or more subelement
+		* Non-TB Specific subelement
+		* TB-specific subelement
+		* Secure LTF subelement
 * 9.4.2.299 Secure LTF Parameters
 	* Element ID: 255
 	* Element ID Extension: 94
@@ -480,6 +571,8 @@ A secure fine timing measurement session can only established with the following
 * DMG (Directional Multi-Gigabit)
 * EDMG (Enhanced Directional Multi-Gigabit)
 * LTF (Long Training Field)
-
+* URNM-MFPR (Unassociated Range Negotiation and Measurement Management Frame Protection Required)
+* URNM-MFPR-X20 (Unassociated Range Negotiation and Measurement Management Frame Protection Required Exempt 20MHz)
+* RSID (ranging session Identifier)
 
 # Reference
