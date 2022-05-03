@@ -208,9 +208,61 @@ ISTAs can measure time of arrivals of each other’s ranging NDPs
 
 ISTA indicates its availability to start the measurement exchange by responding to the Poll Ranging Trigger from the RSTA
 
-IFTM shall include a Ranging Parameter element containing TB Specific subelement
-The TB specific element
-* ISTA Availability Window element
+
+
+IFTMR
+* Ranging parameters
+	* I2R LMR Feedback
+		* 1: ISTA shares measurement results with the RSTA
+		* 0: ISTA does not share measurement results with the RSTA
+	* Format and Bandwidth
+	* Max R2I Repetition
+		* must > 0, if Secure LTF Required field = 1
+	* Max I2R Repetition
+		* must > 0, if Secure LTF Required field = 1
+	* Max R2I STS ≤ 80 MHz
+	* Max R2I STS > 80 MHz
+	* Max I2R STS ≤ 80 MHz
+	* Max I2R STS > 80 MHz
+	* Max R2I LTF Total
+	* Max I2R LTF Total
+	* I2R AOA Requested
+	* R2I AOA Requested
+	* R2I TOA Type
+		* 1: if RSTA's Phase Shift TOA Feedback Support field is 1 in the Extended Capabilities element
+		* 0: otherwise
+	* TB Specific subelement
+		* ISTA Availability Window element
+			* Availability Bitmap
+			* Count: periodicity in units of 10 TUs, shall be a multiple of the Beacon Interval of the RSTA in units of 10 TUs
+	* Secure LTF subelement (optional)
+
+IFTM
+* Ranging parameters
+	* I2R LMR Feedback
+		* if I2R LMR Feedback in IFTMR is 0 and RSTA's I2R LMR Feedback Policy is 1
+			* set to 0
+		* if I2R LMR Feedback in IFTMR is 0 and RSTA's I2R LMR Feedback Policy is 0 
+			* set to 0
+			* set to 1 ==> ISTA may either proceed with measurement exchange or terminate the FTM session
+		* 1: if I2R LMR Feedback in IFTMR is 1
+			* set to 1 or 0
+	* I2R AOA Requested
+	* R2I AOA Requested
+	* R2I TOA Type
+		* 1: if RSTA's Phase Shift TOA Feedback Support field is 1 in the Extended Capabilities element
+		* 0: otherwise
+	* TB Specific subelement
+		* RSTA Availability Window element
+			* Availability Window Information
+				* contain only one
+				* Availability Window Broadcast Format subfield: 0
+				* represents the availability window assigned by the RSTA to the ISTA
+		* AID/RSID
+		* Max Session Exp
+			* Larger than Periodicity field in RSTA Availability Window element
+
+
 
 # Non-TB Ranging Measurement Exchange
 
@@ -218,7 +270,35 @@ A ranging measurement procedure that uses NDP, and is not initiated by a Ranging
 
 An availability window instance is negotiated, during whch the ISTA may come to the channel at any time and use contention based access to initiate a new measurement exchange.
 
-IFTM shall include a Ranging Parameter element containing non-TB Specific subelement
+## Negotiation
+
+IFTMR
+* Ranging parameters
+	* I2R LMR Feedback
+		* 1: ISTA shares measurement results with the RSTA
+		* 0: ISTA does not share measurement results with the RSTA
+	* Format and Bandwidth
+	* Max R2I Repetition
+		* must > 0, if Secure LTF Required field = 1
+	* Max I2R Repetition
+		* must > 0, if Secure LTF Required field = 1
+	* Max R2I STS ≤ 80 MHz
+	* Max R2I STS > 80 MHz
+	* Max I2R STS ≤ 80 MHz
+	* Max I2R STS > 80 MHz
+	* Max R2I LTF Total
+	* Max I2R LTF Total
+	* I2R AOA Requested
+	* R2I AOA Requested
+	* Non-TB Specific subelement
+		* I2R Tx Power field: announce the TX power of I2R NDPs
+		* R2I Tx Power field: announce the TX power of R2I NDPs
+
+IFTM
+* Ranging parameters
+	* Non-TB Specific subelement
+		* I2R Tx Power field: announce the TX power of I2R NDPs
+		* R2I Tx Power field: announce the TX power of R2I NDPs
 
 # Passive TB Ranging Measurement Exchange
 
@@ -453,11 +533,14 @@ To announce scheduling and parameters of the availability window for passive TB 
 		* bit 92: Passive TB Ranginng Responder Measurement Support
 		* bit 93: Passive TB Ranging Initiator Measurement Support
 		* bit 94: AOA Measurements Available
-		* bit 95: Phase Shift Feedback Support
+		* bit 95: Phase Shift TOA Feedback Support
 			* Can be set to 1, if one of the bits in bit 90 ~ 93 is set
+			* indicate the RSTA’s capability to support phase shift TOA feedback
 		* bit 96: DMG/location supporting APs in the area
 		* bit 97: I2R LMR Feedback Policy
-			* set to 1, if LMT feedback is implemented and if bit 90 or bit 91 is set
+			* if bit 90 is set or bit 91 is set
+				* 1: RSTA does not require ISTAs to support the capability to generate and transmit I2R LMRs
+				* 0: indicates that ISTAs shall negotiate the transmission of I2R LMR
 * 9.4.2.167 Fine Timing Measurement Parameters element
 	* Element ID: 206
 * 9.4.2.241 RSN Extension element (RSNXE)
