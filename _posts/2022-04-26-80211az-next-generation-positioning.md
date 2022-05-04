@@ -204,6 +204,18 @@ Availability window --> similar to burst instance in EDCA based ranging
 
 ISTAs can measure time of arrivals of each other’s ranging NDPs
 
+
+availability windows
+* scheduled periodic time windows assigned to ISTAs
+* RSTA and ISTAs shall not transmit or trigger transmission of any Data frames 
+* duration
+	* a single TXOP
+	* multiple TXOPs by announcement, if a single TXOP is insufficient to accommodate all ISTAs that responded to the poll
+
+measurement exchange is dynamic
+* actual number of ISTAs participating in the measurement exchange can vary across availability windows
+* Each ISTA that is assigned to the scheduled 	availability window may participate in or skip the corresponding measurement exchange
+
 ## Negotiation
 
 ISTA indicates its availability to start the measurement exchange by responding to the Poll Ranging Trigger from the RSTA
@@ -228,9 +240,11 @@ IFTMR
 	* Max I2R LTF Total
 	* I2R AOA Requested
 	* R2I AOA Requested
+	* I2R LMR feedback
 	* R2I TOA Type
-		* 1: if RSTA's Phase Shift TOA Feedback Support field is 1 in the Extended Capabilities element
-		* 0: otherwise
+	* I2R TOA Type
+		* 1: if I2R LMR Feedback is set to 1
+		* 
 	* TB Specific subelement
 		* ISTA Availability Window element
 			* Availability Bitmap
@@ -249,20 +263,54 @@ IFTM
 			* set to 1 or 0
 	* I2R AOA Requested
 	* R2I AOA Requested
+	* I2R LMR feedback
 	* R2I TOA Type
-		* 1: if RSTA's Phase Shift TOA Feedback Support field is 1 in the Extended Capabilities element
-		* 0: otherwise
+	* I2R TOA Type
+		* 1: if ISTA's I2R LMR Feedback is set to 1
+		* 0
 	* TB Specific subelement
 		* RSTA Availability Window element
-			* Availability Window Information
+			* Availability Window Information, if Session Indication = 1
 				* contain only one
 				* Availability Window Broadcast Format subfield: 0
 				* represents the availability window assigned by the RSTA to the ISTA
+			* Availability Window Information (optionally), if Session Indication = 2 or 3
+				* contain one or more Availability Window Information
+				* represents an availability window that the RSTA can assign to that ISTA if requested by the ISTA in future
+				* passive TB ranging availability window bit = 0
 		* AID/RSID
 		* Max Session Exp
 			* Larger than Periodicity field in RSTA Availability Window element
+* FTM Synchronization Information element
+	* if Status Indication = 1
 
 
+RSTA shall reject a request for TB ranging from an ISTA if the RSTA cannot assign the ISTA to an availability window that overlaps with a 10 TU interval in which the ISTA is available
+
+
+## Measurement Exchange
+
+Within availability window, RSTA and ISTAs shall not transmit or trigger transmission of any Data frames, only perform ranging-related activities
+* Polling
+* Measurement Sounding
+* Measurement Reporting
+* signaling of modification of availability window parameters
+* TB ranging session termination
+
+Each availability window consists of one or more triplets of sequential phases
+* Polling phase
+* Measurement Sounding phase
+* Measurement Reporting phase
+
+RSTA shall use an AID or Ranging Session ID (RSID) to identify an associated or unassociated ISTA respectively.
+
+### Polling Phase
+
+RSTA should poll all the ISTAs assigned to that availability window
+* typically contains a single poll
+* multiple pills if the available bandwidth is insufficient to allow for the polling of all ISTAs assigned to the availability window
+	* multiple polling/sounding/reporting triplets within a single TXOP
+	* multiple polling/sounding/reporting triplets in separate TXOPs
 
 # Non-TB Ranging Measurement Exchange
 
@@ -657,5 +705,7 @@ To announce scheduling and parameters of the availability window for passive TB 
 * URNM-MFPR (Unassociated Range Negotiation and Measurement Management Frame Protection Required)
 * URNM-MFPR-X20 (Unassociated Range Negotiation and Measurement Management Frame Protection Required Exempt 20MHz)
 * RSID (ranging session Identifier)
+* AWV (antenna weight vector)
+* TF (trigger frame)
 
 # Reference
