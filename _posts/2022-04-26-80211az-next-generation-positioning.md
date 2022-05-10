@@ -312,6 +312,107 @@ RSTA should poll all the ISTAs assigned to that availability window
 	* multiple polling/sounding/reporting triplets within a single TXOP
 	* multiple polling/sounding/reporting triplets in separate TXOPs
 
+RSTA sends a Poll Ranging Trigger frame and allocates each RU in the TF Ranging poll to only one ISTA.
+Only ISTA addressed by a User Info field in a TF Ranging Poll frame can response to the TF Ranging Poll.
+If ISTA decide to participate in measurements in this availability window, the ISTA responds with a CTS-to-self in an S-MPDU within an HE TB PPDU in its designated RU allocation.
+
+
+RSTA shall set RA field to the broadcast address and the More TF subfield in the Common Info field to
+* 0: if there are no additional polling/sounding/reporting triplets in the same availability window
+* 1: indicate the extra polling/sounding/reporting triplets in the following TFs in the same availability window
+	* TF Ranging Poll frame
+	* TFs in Measurement Sounding phase 
+	* TFs in Measurement Reporting phase
+
+ISTAs that not have been addressed by a TF ranging poll w/ More TF = 0 shall enter doze state.
+
+RSTA maintains a trigger poll counter
+* The counter is increased by one before transmitting a TF Ranging Poll
+* The counter modulo 8 is set to the Token subfield of the trigger Dependent Common Info subfield
+* The same value shall set the Token subfield in the STA Info field with the AID11 subfield equal to 2044 in the following Ranging NDPA in Sounding Phase
+
+
+### Sounding Phase
+
+RSTA sends a TF Ranging Sounding soliciting I2R NDP from one or more ISTAs.
+RSTA may sends more than one TF Ranging Sounding, each is solicited by an I2R NDP.
+The TF Ranging Sounding + I2R NDP may repeat one or more times until RSTA sends a Ranging NDPA.
+
+Each TF Ranging Sounding shall allocate uplink resources for one or more ISTAs’ I2R NDP multiplexed in the spatial stream domain covering the full bandwidth.
+
+After receiving I2R NDP from all ISTAs, RSTA shall transmit an NDP Announcement frame followed by a R2I NDP.
+Ranging NDP Announcement frame’s STA Info fields specify all the ISTAs that were allocated uplink resources in the measurement sounding phase.
+
+
+RSTA's bandwidth selection in measurement sounding phase
+* less than or equal to the RSTA Assigned Max Bandwidth of each of the ISTAs that are being allocated resources for this TF ranging sounding 
+* may be different from the bandwidth used in the Polling phase
+
+Then, RSTA shall use the selected brandwidth to transmit
+* TF Ranging Sounding 
+* Ranging NDP Announcement
+* R2I NDP
+RSTA shall also set the selected bandwidth to TXVECTOR parameter CH\_BANDWIDTH to all above three frames
+
+RSTA shall also set the selected bandwidth to UL BW subfield of the Common Info field of the TF Ranging Sounding
+
+In TF Ranging Sounding, User Info Field
+* SS Allocation
+	* If UL BW field is less than or equal to 80 MHz, the Number of Spatial Streams shall not exceed the RSTA Assigned I2R STS ≤ 80 MHz for the corresponding ISTA
+	* If UL BW field is larger than 80 MHz, the Number of Spatial Streams shall not exceed the RSTA Assigned I2R STS > 80 MHz for the corresponding ISTA
+* I2R Rep
+	* number of LTF repetitions in the I2R NDP preamble
+	* shall not exceed any of the RSTA Assigned 'Max I2R Rep' corresponding to the ISTA triggered by this Trigger frame, which is negotiated by ranging parameters
+	* All the I2R Rep subfields in the User Info fields of the TF Ranging Sounding shall be set to the same value
+
+In TF Ranging Sounding, Common Info Field
+* Number Of HE-LTF Symbols And Midamble Periodicity subfield
+	* The result of this filed multiply the number of LTF repetitions in I2R Rep shall not exceed the RSTA Assigned 'Max I2R LTF Total' for any of the ISTA triggered by this Trigger frame,
+
+Note: The maximum number of LTFs limits the allowed combinations of number of space-time streams and HE-LTF repetitions
+
+In Ranging NDP Announcement
+* STA Info filed w/ AID is less than 2008
+	* it identifies a STA that is intended to receive this frame and assigns the parameters
+	* LTF Offset filed 
+		* For secure LTF: indicates the number of HE-LTF to skip when processing the following NDP
+		* 0, otherwise
+	* R2I N\_STS
+		* if the TXVECTOR parameter CH_BANDWIDTH of this frame is less than or equal to 80 MHz, R2I N_STS subfield value shall not exceed the RSTA assigned R2I STS ≤ 80 MHz for the corresponding ISTA
+		* if the TXVECTOR parameter CH_BANDWIDTH of this frame is larger than 80 MHz, R2I N_STS subfield value shall not exceed the RSTA assigned R2I STS > 80 MHz for the corresponding ISTA
+	* I2R N\_STS
+	* R2I Rep: the number of HE-LTF repetitions of the corresponding HE Ranging NDP minus 1
+		* set to a value not to exceed the RSTA Assigned R2I Rep, for the corresponding ISTA
+		* The combination of the values of the R2I N_STS and the R2I Rep shall not lead to a total number of LTF that exceeds the RSTA Assigned R2I LTF Total for each corresponding ISTA
+	* I2R Rep: the number of HE-LTF repetitions of the corresponding HE Ranging NDP minus 1
+	* Disambiguation: 1
+* STA Info filed w/ AID is 2044 (TB only)
+	* carry the Partial TSF of RSTA, TSF[21:6]
+	* The Partial TSF subfiled is set to the value of the TF ranging poll of this Available Window
+	* The Token subfiled is set to the value of the TF ranging poll of this Available Window
+	* For timer sync ???
+(Following are appear in non-TB Ranging NDPA only)
+* STA Info filed w/ AID is 2043 (non-TB only)
+	* For non-TB ranging measurement exchange with secure LTF to carry the sequence authentication code (SAC)
+* STA Info filed w/ AID is 2045 (non-TB only)
+	* carry the I2R NDP Tx Power and R2I NDP Target RSSI subfields
+
+## Ranging Trigger Frame
+
+TF Ranging's Trigger Type is 8.
+
+TF Ranging has the following variants
+* Poll
+* Sounding, Secure Sounding, Passive Sounding
+* Report
+
+The Token field of Trigger Dependent Comon Info field in a Poll Ranging Trigger is used to match the partial TSF time in a following Ranging NDP Announcement frame.
+
+Sounding Dialog Token Number subfield is only used in Passive Sounding Rangging Trigger for identifing a Measurement Sounding phase.
+The same value is included in the Sounding Dialog Token field of the Ranging NDP Announcement frame transmitted within the same Availability Window.
+
+
+
 # Non-TB Ranging Measurement Exchange
 
 A ranging measurement procedure that uses NDP, and is not initiated by a Ranging Trigger frame.
