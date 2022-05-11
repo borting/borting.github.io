@@ -280,6 +280,8 @@ IFTM
 				* passive TB ranging availability window bit = 0
 		* AID/RSID
 		* Max Session Exp
+			* the time before which a new measurement exchange should be initiated and completed
+			* Max Session Expiry = 2 ^ (Max Session Exp + 8), unit: ms
 			* Larger than Periodicity field in RSTA Availability Window element
 * FTM Synchronization Information element
 	* if Status Indication = 1
@@ -326,11 +328,14 @@ RSTA shall set RA field to the broadcast address and the More TF subfield in the
 
 ISTAs that not have been addressed by a TF ranging poll w/ More TF = 0 shall enter doze state.
 
-RSTA maintains a trigger poll counter
+To aid in synchronizing the TSF time at the ISTAs, RSTA maintains a trigger poll counter
 * The counter is increased by one before transmitting a TF Ranging Poll
-* The counter modulo 8 is set to the Token subfield of the trigger Dependent Common Info subfield
+* The counter modulo 8 is set to the Token subfield of the trigger Dependent Common Info subfield in TF ranging poll
 * The same value shall set the Token subfield in the STA Info field with the AID11 subfield equal to 2044 in the following Ranging NDPA in Sounding Phase
+The Partial TSF subfield should be equals to the RSTA’s TSF[21:6] at the time of transmission of the preceeding TF Ranging Poll.
+(Note: The 'Token subfield' in the STA Info field with the AID11 subfield equal to 2044 is **different** from the 'Sounding Dialog Token' of Ranging NDPA)
 
+If delayed I2R LMR is negotiated and TOA measurement for the previous availability window is not ready, ISTA shall not respond to the TF Ranging Poll until the I2R LMR is ready.
 
 ### Sounding Phase
 
@@ -396,6 +401,95 @@ In Ranging NDP Announcement
 	* For non-TB ranging measurement exchange with secure LTF to carry the sequence authentication code (SAC)
 * STA Info filed w/ AID is 2045 (non-TB only)
 	* carry the I2R NDP Tx Power and R2I NDP Target RSSI subfields
+
+Usage of Partial TSF Timer subfield in Ranging NDPA
+* For ISTA, especially a unassociated one (?), to synchronize its timer w/ RSTA and determine the start of a subsequent TB ranging availability window
+* ISTA need to keep track of the difference between its local TSF[63:22] and the RSTA’s TSF[63:22] when updating the TSF[21:6]
+	* if ISTA's TSF[21:6] at the reception of a TF Ranging Poll is larger than the received Partial TSF and the absolute difference is more than 2^15, increase the RSTA’s tracked TSF[53:32] by 1
+	* if ISTA's TSF[21:6] at the reception of a TF Ranging Poll is less than the received Partial TSF and the absolute difference is more than 2^15, decrease the RSTA’s tracked TSF[53:32] by 1
+	* For the definition of absolute time difference, please refer this [article talking about how NTP works](https://sookocheff.com/post/time/how-does-ntp-work/).
+
+If RSTA's PHY indicate IntegrityCheckError, when receiving I2R NDP (HE TB Ranging NDP)
+* RSTA shall set the Invalid Measurement field in the R2I LMR frame carrying the TOA to 1
+
+If ISTA's PHY indicate IntegrityCheckError, when receiving R2I NDP (HE Ranging NDP)
+* ISTA shall set the Invalid Measurement field in the I2R LMR frame carrying the TOA to 1 (if I2R LMR feedback is negotiated)
+
+### Reporting Phase
+
+RSTA transmit an R2I LMR to all (#1157) ISTAs that were allocated resources in the preceding measurement sounding phase.
+The R2I LMR
+* be carried in one HE MU PPDU if multiple ISTA, or be carried in an HE SU PPDU if one ISTA.
+* The Dialog Token may not refer to the Sounding Dialog Token in the last ranging NDPA if delayed R2I LMR is negotiated.
+* CFO Parameter is reserved in R2I LMR.
+
+If I2R LMR feedback is negotiaed
+* RSTA sends a Report Ranging Trigger frame to assign uplink resources to the ISTAs
+* ISTA shall repsonse an I2R LMR sifs after receiving TF Ranging Report if immediate I2R LMR is negotiated.
+
+The I2R LMR
+* CFO
+	* When using CFO in the conversion from the ISTA’s time basis to the RSTA’s, the RSTA uses the CFO reported in the CFO Parameter field of the I2R LMR. (In R2I LMR, CFO Parameter is reserved.)
+	* The CFO between the ISTA and the RSTA exceeds the allowed tolerance from the values, this can be an indication of a security attack.
+	* RSTA may account for clock rate differences between ISTA and RSTA based on the CFO parameter included in the received I2R LMR
+
+## LMR frame
+
+
+* frame type
+	* Action No Ack frame of category Public, so no ack nor retransmission
+	* If secure FTM is executed, Protected Fine Timing Action frames shall be used
+* Immediate feedback type for I2R and R2I LMR
+	* determined by ranging parameter during negotiation phase
+	* immediate: from the current availability window
+	* delayed: from the last availability window (前一個 ?) in which the ISTA responded to the TF Ranging Poll frame and the RSTA allocated resources to that ISTA during the measurement sounding phase
+* Dialog Token
+	* Same as the 'Sounding Dialog Token' in the corresponding Ranging NDP Announcement
+	* The Token may not refer to current polling/sounding/reporting triplet, if immediate R2I/I2R feedback is set to 0 (delayed)
+* Invalid Measurement field in ToA Error
+	* If 1
+		* RSTA shall discard TOA field in I2R LMR
+		* ISTA shall discard TOD field in R2I LMR
+* TOA
+	* The measurement value from the sounding phase of which Sounding Dialog Token equals to the Dialog Token of this LMR frame
+* TOD
+	* The measurement value from the sounding phase of which Sounding Dialog Token equals to the Dialog Token of this LMR frame
+
+For delayed reporting
+* set the Invalid Measurement subfield in the TOA Error field of R2I/I2R LMR to 1, if the first instance of the R2I LMR and the optional I2R LMR do not have valid TOA/TOD timestamps to include.
+
+
+## FTM Modification
+
+ISTA can initiate an FTM modification
+* out side of the availability window
+* transmit a Fine Timing Measurement Request frame (can be treated as another IFTMR for the new session), with
+	* modified ranging parameters
+	* Trigger field set to 1
+* this indicates both ISTA and RSTA terminate the current session and start a new session
+
+(TBR) 11.21.6.5.1 Availability Window parameter modification
+
+## FTM Termination
+
+A TB ranging FTM session may be terminated, if
+* (by RSTA) ISTA fails to respond to a TF Ranging Poll frame and receive one TF Ranging (Secured) Sounding frame containing its AID/RSID at least once within the Max Session Expiry interval
+	* Max Session Expiry interval starts from either the end of the successful FTM session negotiation or the beginning of the last successful TB ranging measurement exchange
+* (by RSTA) during the session when the RSTA is permitted to transmit an R2I LMR frame, RSTA transmits an A-MPDU containing an LMR frame and a Fine Timing Measurement frame
+	* LMR frame
+		* Dialog Token field set to 0 
+		* type Action No ACK
+	* FTM frame
+		* Follow Up Dialog Token field is set as 0
+		* not include any Ranging Parameters field
+* (by ISTA) ISTA sends a Fine Timing Measurement Request frame 
+	* Trigger field set to 0
+	* not include Ranging Parameters element
+	* not include Measurement Request element
+* (by ISTA) ISTA sends an IFTMR requests a new session with modified ranging parameters
+
+
+## Availability Window
 
 ## Ranging Trigger Frame
 
