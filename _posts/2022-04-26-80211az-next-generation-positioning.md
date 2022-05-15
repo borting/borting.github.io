@@ -248,7 +248,7 @@ IFTMR
 	* TB Specific subelement
 		* ISTA Availability Window element
 			* Availability Bitmap
-			* Count: periodicity in units of 10 TUs, shall be a multiple of the Beacon Interval of the RSTA in units of 10 TUs
+			* Count: periodicity in units of 10 TUs, shall be a multiple of the Beacon Interval of the RSTA in units of 10 TUs (10 * 1024 microseconds)
 	* Secure LTF subelement (optional)
 
 IFTM
@@ -289,6 +289,22 @@ IFTM
 
 RSTA shall reject a request for TB ranging from an ISTA if the RSTA cannot assign the ISTA to an availability window that overlaps with a 10 TU interval in which the ISTA is available
 
+### Availability Window
+
+Be used in TB ranging only for allocting time slots for measurement exchange.
+* ISTA: IFTMR --> Ranging Parameter element's Ranging subelement --> TB Specific subelemet's Availibility Window field --> ISTA Availibility Wondow element
+* RSTA: IFTM  --> Ranging Parameter element's Ranging subelement --> TB Specific subelemet's Availibility Window field --> RSTA Availibility Wondow element
+
+ISTA Availability Window element
+* Count subfield:
+	* indicates the size in bits of the Availability Bitmap subfield
+	* shall be a multiple of the Beacon Interval of the RSTA in units of 10 TUs 
+	  By default the beacon interval is 100 TUs, hence the value in Count field will be a multiple of 10.
+
+
+RSTA Availability Window element
+* If Status Indication == 1, only one Availability Window Information
+* If Status Indication == 2 or 3, may have more than one Availablity Windown Information, each represents an availability window that the RSTA can assign to that ISTA if requested by the ISTA in future.
 
 ## Measurement Exchange
 
@@ -473,7 +489,7 @@ ISTA can initiate an FTM modification
 ## FTM Termination
 
 A TB ranging FTM session may be terminated, if
-* (by RSTA) ISTA fails to respond to a TF Ranging Poll frame and receive one TF Ranging (Secured) Sounding frame containing its AID/RSID at least once within the Max Session Expiry interval
+* (by both) ISTA fails to respond to a TF Ranging Poll frame and receive one TF Ranging (Secured) Sounding frame containing its AID/RSID at least once within the Max Session Expiry interval
 	* Max Session Expiry interval starts from either the end of the successful FTM session negotiation or the beginning of the last successful TB ranging measurement exchange
 * (by RSTA) during the session when the RSTA is permitted to transmit an R2I LMR frame, RSTA transmits an A-MPDU containing an LMR frame and a Fine Timing Measurement frame
 	* LMR frame
@@ -488,8 +504,6 @@ A TB ranging FTM session may be terminated, if
 	* not include Measurement Request element
 * (by ISTA) ISTA sends an IFTMR requests a new session with modified ranging parameters
 
-
-## Availability Window
 
 ## Ranging Trigger Frame
 
@@ -876,7 +890,9 @@ To announce scheduling and parameters of the availability window for passive TB 
 * NGP (Next Generation Positioning)
 * LCI (Location Configuration Information)
 * LO (Local Oscillator)
-* TU (Time Unit): 1024 microseconds (i.e. 10^(-6) second)
+* TU (Time Unit)
+	* 1024 microseconds (us), roughly 1 milisecond (ms)
+	* 1 microseconds (us) = 10^(-6)
 * PASN (Preassociation Security Negotiation)
 * ISTA (initiating STA)
 * RSTA (responding STA)
@@ -902,5 +918,8 @@ To announce scheduling and parameters of the availability window for passive TB 
 * RSID (ranging session Identifier)
 * AWV (antenna weight vector)
 * TF (trigger frame)
+
+* HE-LTF (high efficiency – long training field)
+	* HE-LTP Repetitions: multiple transmissions of HE-LTF symbols in an HE Ranging NDP or HE TB Ranging NDP
 
 # Reference
