@@ -1,232 +1,49 @@
 ---
 layout: post
-title: "802.11az Next Generation Positioning"
+title: "802.11az NGP: Passive Trigger-based Ranging"
 author: "Borting"
 categories: journal
 tags: [IEEE80211]
 image: rocks.jpg
 ---
 
-這篇介紹 802.11md 如何利用 time synchronization 與電磁波傳輸速度定值的特性, 達成室內定位技術 (Indoor Positioning).
+Passive triggered based (TB) ranging measurement exchange is based on TB ranging.
+A Passive STA (PSTA) listens ranging exchanges between an RSTA and a set of ISTAs.
+PSTA uses the ranging results, differential distances between RSTA and ISTAs, together with knowledge of the RSTA and ISTA locations to estimates its own location.
 
-# Revolution
+A PSTA acquires ranging availability window information for passive TB ranging from an AP's beacon.
 
-發展順序:
-1. RSSI-based positioning: 不精準, 訊號強度容易受到天線場型和環境等影響
-2. 802.11mc Fine Timing Measurement (FTM): 借用 802.11v Timing Measurement 實做 Time of Flight
-3. 802.11az Next Generation Positioning (NGP): 強化 FTM 的隱蔽性與準確度
+Security mechanisms, protected management frames and secure LTF, do not apply to passive TB Ranging.
 
-# Introduction to Fine Timing Measurement
+Difference with TB ranging
+* When phase shift feedback is negotiated for passive TB ranging, both the RSTA and the ISTA measures and reports PSTOAs, in addition to measuring and reporting TOAs.
+* Number of spatial streams (NSTS) for passive TB ranging is limited to 4
+* RSTA uses the Ranging Trigger frame of subtype passive TB ranging for its sounding trigger frames, which is transmitted to one ISTA at a time.
+* ISTAs use HE Ranging NDPs for its I2R NDPs
+* RSTA sends the Primary and Secondary RSTA Broadcast Passive TB Ranging Measurement Report frames at the end of the measurement exchange
+* ISTAs use Passive TB Ranging Measurement Report frame instead of reporting in I2R LMR frame.
+Transmitting Passive TB Ranging Measurement Report frame is mandatory in passive TB Ranging.
 
-A STA can use FTM to accurately measure its range/direction relative to another STA using Time Of Flight (TOF) time difference of arrival and phase measurement.
+The passive TB ranging is scheduled by the RSTA in an availability window used for passive location
+* RSTA includes an RSTA Availability Window element (with Broadcast Format subfield == 1) in its Beacon frame to signal availability windows for Passive TB.
+This enables PSTAs to listen to the passive TB ranging exchanges that are occurring during the availability windows.
 
-An FTM session is an instance of a FTM procedure between an initiating STA (ISTA) and a responding STA (RSTA).
-A session is composed of:
-* negotiation
-* measurement exchange
-* termination
-And how the session works is negotiated and determined by
-* Fine Timing Measurement Parameters element
-* Ranging Parameters element
+The passive TB ranging protocol also allows the same ISTAs to measure time of arrivals of each other’s ranging NDPs
 
-
-The FTM procedure provides 4 mechanisms for measurement exchange:
-* EDCA based ranging measurement exchange
-	* location estimates are based on ToD and ToA of the exchanged FTM frames and their corresponding Ack
-* Trigger based (TB) ranging measurement exchange
-	* location estimates are based on the execution of the trigger based measurement exchange
-	* allows for the execution of the measurement exchange between a responding STA (RSTA) and multiple initiating STAs (ISTAs) at the same time
-* Non-Trigger based (non-TB) ranging measurement exchange
-	* location estimates are based on the execution of the non-TB measurement exchange
-* Passive triggered based (TB) ranging measurement exchange
-	* determine its location based on periodic measurement reports from other STAs that execute the passive TB ranging measurement exchange amongst themselves
-
-Optionally enable security parameters enabling mechanisms to ensure that the measurement exchange is executed with the intended peer:
-* EDCA based exchange of Fine Timing Measurement frames, only over EDMG (802.11ay)
-* Trigger based (TB) measurement
-* Non-Trigger based (non-TB) measurement
+An RSTA can temporarily take on the role of being an ISTA, such that it can participate in another RSTA's passive TB ranging operation and perform passive TB ranging exchanges as an ISTA.
 
 
 # Measurement Procedure
 
-A STA might have multiple concurrent FTM sessions, of which corresponding responding STA may outside of the current BSS/ESS.
+Passive TB ranging negotiation follows the rules and procedures for the TB ranging measurement negotiation.
 
-
-多工:
-* An initiating STA might have multiple ongoing FTM sessions on the same or different channels with different responding STAs, while being associated with an AP for the exchange of data or signaling.
-(同時定位+傳輸資料)
-* A responding STA (e.g. AP) might be required to establish overlapping FTM sessions with a large number of initiating STAs 
-
-為了滿足多工:
-* During the negotiation phase the initiating STA initially requests a preferred periodic time window allocation
-(See 802.11mc Figure 11-34—Concurrent FTM sessions.)
-* During each burst instance
-	* the initiating STA indicates its availability by transmitting a Fine Timing Measurement Request frame, and
-	* the responding STA transmits one or more Fine Timing Measurement frames as negotiated.
-
-
-During the measurement procedure:
-* iSTA sends Fine Timing Measurement Request frames w/ various elements
-* rSTA sends Fine Timing Measurement frames w/ various elements
-Both frames are public action frames.
-
-
-Types of frames involved in the ranging procedure:
-* Initial Fine Timing Measurement Request frame
-	* Trigger field: 1
-	* Fine Timing Measurement Parameters element which describes the initiating STA’s availability
-* Fine Timing Measurement Request frame
-* Initial Fine Timing Measurement frame
-	* Respond in 10ms (10^-3 sec)
-	* Status Indication field
-	* Fine Timing Measurement Parameters element
-* Fine Timing Measurement frame
-* Ack
-
-# EDCA-based Ranging Measurement
-
-
-## Negotiation Phase
-
-### Step 1
-An initiating STA shall transmit a Fine Timing Measurement Request frame.
-This frame called the initial Fine Timing Measurement Request frame, of which
-* Trigger field set to 1
-* a set of scheduling parameters in a Fine Timing Measurement Parameters element (Section 9.4.2.168 Fine Timing Measurement Parameters element)
-* Format and Bandwidth field
-	* ISTA shall indicate an EDCA based HE format only if
-		* STAs are operating in the 6 GHz band
-		* at least one of the STAs does not support TB or does not support non-TB ranging
-	* Otherwise, a WIFI6 ISTA shall not indicate an EDCA based HE format
-
-### Step 2
-The responding STA should transmit a Fine Timing Measurement frame within 10 ms in response to the initial Fine Timing Measurement Request frame.
-The first Fine Timing Measurement frame in the FTM session is called the initial Fine Timing Measurement frame, of which
-* Fine Timing Measurement Parameters element
-	* Format and Bandwidth field should be same as that of the initiating STA if supported or narrower bandwidth.
-	* ASAP capable field
-	* ASAP field
-		* A responding STA that is an AP
-			* shall support and select non-ASAP operation, if the initiating STA requests non-ASAP operation
-			* can select ASAP/non-ASAP, if the initiating STA requests ASAP operation. And the initiating STA must select non-ASAP, if the responding STA responds to do so.
-			* If a responding STA is ASAP capable, the responding STA should select ASAP as that requested by the initiating STA.
-		* A responding STA that is a non-AP
-			* shall support and select ASAP operation, if the initiating STA request ASAP operation
-			* can select ASAP/non-ASAP, if the initiating STA requests non-ASAP operation. And the initiating STA must select ASAP, if the responder STA responds to do so.
-	* FTMs per Burst
-		* be the same as the one requested by the initiating STA if the requested value of the Burst Duration field is 15 (no preference) 
-	* Burst Period: responding STA’s selection shall be greater than or equal the responding STA’s selection of Burst Duration
-		
-
-## Measurement Exchange Phase
-
-A burst instance is a period in which Fine Timing Measurement frames are sent.
-The timing is defined by:
-* Partial TSF Time
-* Burst Duration
-* Burst Period
-
-The first burst instance shall start at the value indicated by the value of the Partial TSF Timer field in the initial Fine Timing Measurement frame, regardless of the ASAP field’s value.
-If ASAP is set to 1 by the responding STA, the Partial TSF Timer field value shall be set to a value less than 10 ms from the reception
-
-### Step1
-
-initiating STA shall transmit a Fine Timing Measurement Request frame
-* Trigger 1
-* w/o Measurement Request element
-* w/o Fine Timing Measurement Parameters element
-
-### Step2
-
-responding STA sends an ack, then starts to sends FTM framesa
-
-The first Fine Timing Measurement frame and its retransmissions in the burst instance should include an FTM Synchronization Information element.
-	* The TSF Sync Info field might be used by the initiating STA to synchronize its TSF with the responding STA 
-
-Subsequent FTM frames within the burst instance shall not include a Fine Timing Measurement Parameters element and shall not include an FTM Synchronization Information field
-
-If a Fine Timing Measurement frame is sent outside a burst instance, it might not be acknowledged.
-
-Fine Timing Measurement frames shall not be transmitted in DSSS (802.11-1997), HR/DSSS (802.11b), [HT Duplicate (MCS 32)](https://www.cwnp.com/ht-duplicate-mcs-32-and-non-ht-duplicate/) format, or HT-greenfield format
-
-A responding STA that transmits a Fine Timing Measurement frame with the ASAP field set to 0
-* Set Partial TSF Timer field to an offset value D TSF from the partial value of the responding STA’s TSF timer at the time of the transmission of the Ack to the last Fine Timing Measurement Request frame
-
-
-If (1) not received Ack for initial Fine Timing Measurement frame, (2) nor received Fine Timing Measurement Request frame,
-the responding STA shall not terminate the FTM session before the time indicated by the Partial TSF timer plus the Burst Duration
-
-A responding STA set the Dialog Token field to 0 in the last Fine Timing Measurement frame and its FTM retransmissions
-
-### Step3
-
-The initiating STA may perform FTM on the last Fine Timing Measurement frame in a burst instance. (最後一個可以不計算 FTM)
-#### Calculation
-Round Trip Time (RTT):
-```
-RTT = [(t4' – t1') – (t3 – t2)]
-```
-
-SME at the initiating STA may estimate the offset of the local clock relative to that at the responding STA
-```
-clock offset = [(t2 - t1') - (t4' - t3)]/2
-```
-
-#### FTM retransmission
-
-If the Ack frame for a transmitted Fine Timing Measurement frame is not received, the responding STA shall not retry the frame.
-
-The responding STA shall send a Fine Timing Measurement frame with the same Action frame body as the Fine Timing Measurement frame for which the Ack was not received, except:
-* updating the Dialog Token if it was nonzero.
-* updating Sequence Number in the MAC header
-
-
-#### FTM Modification
-
-如果 iSTA sent a Fine Timing Measurement Request frame with
-* Trigger field set to 1
-* including a new Fine Timing Measurement Parameters element
-This means current FTM session is terminated and shall use new parameters
-
-## Termination Phase
-
-* Case 1: ended after the last burst instance
-* Case 2: responding STA sends a Fine Timing Measurement frame with the Dialog Token field set to 0
-* Case 3: initiating STA sends a Fine Timing Measurement Request frame with the Trigger field set to 0 (not include Measurement Request element nor Fine Timing Measurement Parameters element)
-* Case 4: initiating STA sends a Fine Timing Measurement Request frame with the Trigger field set to 1 and includes a new Fine Timing Measurement Parameters element
-
-
-# TB Ranging Measurement Exchange
-
-Allows for the execution of the measurement exchange between a responding STA (RSTA) and multiple initiating STAs (ISTAs) at the same time.
-
-Availability window --> similar to burst instance in EDCA based ranging
-
-ISTAs can measure time of arrivals of each other’s ranging NDPs
-
-
-availability windows
-* scheduled periodic time windows assigned to ISTAs
-* RSTA and ISTAs shall not transmit or trigger transmission of any Data frames 
-* duration
-	* a single TXOP
-	* multiple TXOPs by announcement, if a single TXOP is insufficient to accommodate all ISTAs that responded to the poll
-
-measurement exchange is dynamic
-* actual number of ISTAs participating in the measurement exchange can vary across availability windows
-* Each ISTA that is assigned to the scheduled 	availability window may participate in or skip the corresponding measurement exchange
+When an RSTA has set the 'Passive TB Ranging Responder Measurement Support' field to 1 in the Extended Capabilities element, an ISTA may set the Passive TB Ranging field in the TB specific subelement in an IFTMR frame.
 
 ## Negotiation
 
-ISTA indicates its availability to start the measurement exchange by responding to the Poll Ranging Trigger from the RSTA
-
-
-
-IFTMR
+ISTA transmits an IFTMR frame to an RSTA, which has set the 'Passive TB Ranging Responder Measurement Support' field to 1 in the Extended Capabilities element":
 * Ranging parameters
-	* I2R LMR Feedback
-		* 1: ISTA shares measurement results with the RSTA
-		* 0: ISTA does not share measurement results with the RSTA
+	* I2R LMR Feedback is reserved since the transmission of the ISTA Passive TB Ranging Measurement Report frame is mandatory
 	* Format and Bandwidth
 	* Max R2I Repetition
 		* must > 0, if Secure LTF Required field = 1
@@ -244,14 +61,16 @@ IFTMR
 	* R2I TOA Type
 	* I2R TOA Type
 		* 1: if I2R LMR Feedback is set to 1
-		* 
+	* Secure LTF (shall not be included)
 	* TB Specific subelement
+		* Passive TB Ranging field to 1
 		* ISTA Availability Window element
 			* Availability Bitmap
 			* Count: periodicity in units of 10 TUs, shall be a multiple of the Beacon Interval of the RSTA in units of 10 TUs (10 * 1024 microseconds)
 	* Secure LTF subelement (optional)
+* LCI report must be included
 
-IFTM
+RSTA responds with an IFTM:
 * Ranging parameters
 	* I2R LMR Feedback
 		* if I2R LMR Feedback in IFTMR is 0 and RSTA's I2R LMR Feedback Policy is 1
@@ -269,6 +88,7 @@ IFTM
 		* 1: if ISTA's I2R LMR Feedback is set to 1
 		* 0
 	* TB Specific subelement
+		* Passive TB Ranging field to 1
 		* RSTA Availability Window element
 			* Availability Window Information, if Session Indication = 1
 				* contain only one
@@ -276,15 +96,14 @@ IFTM
 				* represents the availability window assigned by the RSTA to the ISTA
 			* Availability Window Information (optionally), if Session Indication = 2 or 3
 				* contain one or more Availability Window Information
+				* Availability Window Broadcast Format subfield: 0
 				* represents an availability window that the RSTA can assign to that ISTA if requested by the ISTA in future
-				* passive TB ranging availability window bit = 0
+			* passive TB ranging availability window bit = 1
 		* AID/RSID
 		* Max Session Exp
 			* the time before which a new measurement exchange should be initiated and completed
 			* Max Session Expiry = 2 ^ (Max Session Exp + 8), unit: ms
 			* Larger than Periodicity field in RSTA Availability Window element
-* FTM Synchronization Information element
-	* if Status Indication = 1
 
 
 RSTA shall reject a request for TB ranging from an ISTA if the RSTA cannot assign the ISTA to an availability window that overlaps with a 10 TU interval in which the ISTA is available
@@ -322,18 +141,24 @@ Each availability window consists of one or more triplets of sequential phases
 
 RSTA shall use an AID or Ranging Session ID (RSID) to identify an associated or unassociated ISTA respectively.
 
-### Polling Phase
+Difference with TB ranging
+* Sounding phase
+	* RSTA shall transmit the Passive Sounding Ranging Trigger frame instead of the the Sounding Ranging Trigger frame.
+	* ISTA shall respond with an HE Ranging NDP instead of an HE TB Ranging NDP.
+* Reporting phase
+	* RSTA shall broadcast two frames, the Primary and Secondary RSTA Broadcast Passive TB Ranging Measurement Report frames containing measurement data and related information.
 
-RSTA should poll all the ISTAs assigned to that availability window
-* typically contains a single poll
-* multiple pills if the available bandwidth is insufficient to allow for the polling of all ISTAs assigned to the availability window
+RSTA should poll all ISTAs assigned to that availability window
+* typically done in a single polling/sounding/reporting triplet.
+* multiple polls if the available bandwidth is insufficient to allow for the polling of all ISTAs assigned to the availability window
 	* multiple polling/sounding/reporting triplets within a single TXOP
 	* multiple polling/sounding/reporting triplets in separate TXOPs
+
+### Polling Phase
 
 RSTA sends a Poll Ranging Trigger frame and allocates each RU in the TF Ranging poll to only one ISTA.
 Only ISTA addressed by a User Info field in a TF Ranging Poll frame can response to the TF Ranging Poll.
 If ISTA decide to participate in measurements in this availability window, the ISTA responds with a CTS-to-self in an S-MPDU within an HE TB PPDU in its designated RU allocation.
-
 
 RSTA shall set RA field to the broadcast address and the More TF subfield in the Common Info field to
 * 0: if there are no additional polling/sounding/reporting triplets in the same availability window
@@ -355,42 +180,23 @@ If delayed I2R LMR is negotiated and TOA measurement for the previous availabili
 
 ### Sounding Phase
 
-RSTA sends a TF Ranging Sounding soliciting I2R NDP from one or more ISTAs.
-RSTA may sends more than one TF Ranging Sounding, each is solicited by an I2R NDP.
-The TF Ranging Sounding + I2R NDP may repeat one or more times until RSTA sends a Ranging NDPA.
+RSTA sends a Passive Sounding Ranging TF (includes a single User Info field) to one ISTA once at a time.
+Upon receiving Passive Sounding Ranging TF, ISTA respones an I2R NDP (in HE Ranging NDP).
+After RSTA has sent Passive Sounding Ranging TF to each ISTA, RSTA sends a Ranging NDPA frame solliciting an R2I NDP.
 
-Each TF Ranging Sounding shall allocate uplink resources for one or more ISTAs’ I2R NDP multiplexed in the spatial stream domain covering the full bandwidth.
+Bandwidth selection
+* less than or equal to the Max Bandwidth RSTA indicated to the ISTA
+* RSTA shall set the TXVECTOR parameter CH\_BANDWIDTH shall be the same value as the BW subfield of the Common Info field in the Passive Sounding Ranging Trigger frame.
+* ISTA responses an HE Ranging NDP shall set the TXVECTOR parameter CH\_BANDWIDTH to be the same value as the BW subfield of the Common Info field in the Passive Sounding Ranging Trigger frame.
 
-After receiving I2R NDP from all ISTAs, RSTA shall transmit an NDP Announcement frame followed by a R2I NDP.
-Ranging NDP Announcement frame’s STA Info fields specify all the ISTAs that were allocated uplink resources in the measurement sounding phase.
+ISTA may measure and report either the TOAs, or both the TOAs and the PSTOAs, when it receives the HE Ranging NDPs transmitted by the other ISTAs participating in the passive TB ranging exchange.
+By reporting the timestamps for when it received the other ISTAs NDP transmissions, the quality of the location estimate for a PSTA listening in to the passive TB ranging exchanges can be improved.
 
-
-RSTA's bandwidth selection in measurement sounding phase
-* less than or equal to the RSTA Assigned Max Bandwidth of each of the ISTAs that are being allocated resources for this TF ranging sounding 
-* may be different from the bandwidth used in the Polling phase
-
-Then, RSTA shall use the selected brandwidth to transmit
-* TF Ranging Sounding 
-* Ranging NDP Announcement
-* R2I NDP
-RSTA shall also set the selected bandwidth to TXVECTOR parameter CH\_BANDWIDTH to all above three frames
-
-RSTA shall also set the selected bandwidth to UL BW subfield of the Common Info field of the TF Ranging Sounding
-
-In TF Ranging Sounding, User Info Field
-* SS Allocation
-	* If UL BW field is less than or equal to 80 MHz, the Number of Spatial Streams shall not exceed the RSTA Assigned I2R STS ≤ 80 MHz for the corresponding ISTA
-	* If UL BW field is larger than 80 MHz, the Number of Spatial Streams shall not exceed the RSTA Assigned I2R STS > 80 MHz for the corresponding ISTA
-* I2R Rep
-	* number of LTF repetitions in the I2R NDP preamble
-	* shall not exceed any of the RSTA Assigned 'Max I2R Rep' corresponding to the ISTA triggered by this Trigger frame, which is negotiated by ranging parameters
-	* All the I2R Rep subfields in the User Info fields of the TF Ranging Sounding shall be set to the same value
-
-In TF Ranging Sounding, Common Info Field
-* Number Of HE-LTF Symbols And Midamble Periodicity subfield
-	* The result of this filed multiply the number of LTF repetitions in I2R Rep shall not exceed the RSTA Assigned 'Max I2R LTF Total' for any of the ISTA triggered by this Trigger frame,
-
-Note: The maximum number of LTFs limits the allowed combinations of number of space-time streams and HE-LTF repetitions
+If phase shift feedback is negotiated:
+* RSTA shall measure TOA and PSTOA on the I2R NPD it receives from the ISTA
+* ISTA measure
+	* (shall) TOA and PSTOA on the R2R NPD it receives from the RSTA
+	* (may) TOA and PSTOA on the I2R NPD it receives from other ISTA
 
 In Ranging NDP Announcement
 * STA Info filed w/ AID is less than 2008
@@ -412,11 +218,6 @@ In Ranging NDP Announcement
 	* The Partial TSF subfiled is set to the value of the TF ranging poll of this Available Window
 	* The Token subfiled is set to the value of the TF ranging poll of this Available Window
 	* For timer sync ???
-(Following are appear in non-TB Ranging NDPA only)
-* STA Info filed w/ AID is 2043 (non-TB only)
-	* For non-TB ranging measurement exchange with secure LTF to carry the sequence authentication code (SAC)
-* STA Info filed w/ AID is 2045 (non-TB only)
-	* carry the I2R NDP Tx Power and R2I NDP Target RSSI subfields
 
 Usage of Partial TSF Timer subfield in Ranging NDPA
 * For ISTA, especially a unassociated one (?), to synchronize its timer w/ RSTA and determine the start of a subsequent TB ranging availability window
@@ -433,21 +234,109 @@ If ISTA's PHY indicate IntegrityCheckError, when receiving R2I NDP (HE Ranging N
 
 ### Reporting Phase
 
-RSTA transmit an R2I LMR to all (#1157) ISTAs that were allocated resources in the preceding measurement sounding phase.
-The R2I LMR
-* be carried in one HE MU PPDU if multiple ISTA, or be carried in an HE SU PPDU if one ISTA.
-* The Dialog Token may not refer to the Sounding Dialog Token in the last ranging NDPA if delayed R2I LMR is negotiated.
-* CFO Parameter is reserved in R2I LMR.
+Step 1
+RSTA sends R2I LMR reports to ISTAs.
+If phase shift feedback is negotiated, RSTA shall report its measured PSTOA in the R2I LMR frame.
 
-If I2R LMR feedback is negotiaed
-* RSTA sends a Report Ranging Trigger frame to assign uplink resources to the ISTAs
-* ISTA shall repsonse an I2R LMR sifs after receiving TF Ranging Report if immediate I2R LMR is negotiated.
 
-The I2R LMR
-* CFO
-	* When using CFO in the conversion from the ISTA’s time basis to the RSTA’s, the RSTA uses the CFO reported in the CFO Parameter field of the I2R LMR. (In R2I LMR, CFO Parameter is reserved.)
-	* The CFO between the ISTA and the RSTA exceeds the allowed tolerance from the values, this can be an indication of a security attack.
-	* RSTA may account for clock rate differences between ISTA and RSTA based on the CFO parameter included in the received I2R LMR
+Step 2
+RSTA sends a Report Ranging Trigger frame to one or more ISTAs that sent an HE Ranging NDP in the preceding passive TB ranging measurement sounding phase.
+
+Step 3
+ISTA addressed by the Report Ranging Trigger frame shall transmit an ISTA Passive TB Ranging Measurement Report as a public Action No Ack frame.
+* ISTA Passive TB Ranging Measurement Report element
+	* CFO of the ISTA with respect to the RSTA
+	* Timestamp Measurement Report subfield
+		* Type 00: TOD (must included)
+			* AID12/RSID12 of ISTA
+			* Sounding Dialog Token Number identifying the measurement sounding phase
+			* TOD of I2R NDP
+			* Timestamp field has 48-bit long
+		* Type 01: TOA
+			* AID12/RSID12
+				* 0: R2I NDP from RSTA
+				* !0: TOA timestamps for the I2R NDPs received from other ISTAs participating in the passive TB ranging
+			* Sounding Dialog Token Number
+				* Sounding phase of this ISTA
+				* Sounding phase of the I2R NDPs received from other ISTAs
+			* TOA of R2I NDP
+			* Timestamp field has 32-bit long
+		* Type 10: PSTOA
+			* PS-TOA timestamp of the R2I NDP that the ISTA received from the RSTA
+			* PS-TOAs for the I2R NDPs received from other ISTAs participating in the passive TB ranging
+	* More subfield
+		* 1: if it has more timestamps ready to report but does not have space in its allocated resources by the RSTA for ISTA Passive TB Ranging Measurement Report frame.
+
+Step 4
+RSTA sends the Primary RSTA Broadcast Passive TB Ranging Measurement Report frames
+* Passive TB Ranging LCI Table Counter
+	* a reference to the version of the latest Passive TB Ranging LCI Table element transmitted by the RSTA
+	* Initial value: 0
+	* Incremented by 1, if a Passive TB Ranging LCI Table element is included, which has different content as compared to the last transmitted Passive TB Ranging LCI Table element
+	* Otherwise, same as previous one
+* Passive TB Ranging LCI Table Countdown Info
+	* New LCI Table
+		* 0: if the current LCI table and LCI table to be transmitted at the end of the countdown are the same
+	* Passive TB Ranging LCI Table Countdown
+		* an index pointing to the next passive TB ranging availability window where the Passive LCI Table element will be contained
+		* 0 if the Passive TB Ranging LCI Table element is contained
+* RSTA Passive TB Ranging Measurement Report
+	* Sounding Dialog Token Number
+		* the Sounding Dialog Token Number subfield in the Ranging NDP Announcement frame corresponding to the sounding phase in which the reported RSTA timestamps were measured
+	* N Timestamp Measurement Reports
+	* Timestamp Measurement Report subfield
+		* Type 00: TOD (must included)
+			* AID12/RSID12 of ISTA
+			* Sounding Dialog Token Number identifying the measurement sounding phase
+			* TOD of R2I NDP
+			* Timestamp field has 48-bit long
+		* Type 01: TOA
+			* AID12/RSID12 od an ISTA
+			* Sounding Dialog Token Number
+			* TOA of I2R NDP
+			* Timestamp field has 32-bit long
+		* Type 10: PSTOA
+			* PS-TOA timestamp of the I2R NDP that the RSTA received from a ISTA
+* Passive TB Ranging LCI Table element
+	* RSTA LCI Report
+		* if the RSTA has dot11PassiveTBRangingAODImplemented = 1, contain the Antenna Placement and Calibration subelement
+	* ISTA LCI Reports Entries
+		* if the ISTA has dot11PassiveTBRangingAoDImplemented = 1, contain the Antenna Placement and Calibration subelement
+
+Step 5
+RSTA sends the Secondary RSTA Broadcast Passive TB Ranging Measurement Report frames
+* ISTA Passive TB Ranging Measurement Reports
+	* Timestamp Measurement Report subfield
+		* Type 00: TOD (must included)
+			* AID12/RSID12 of ISTA
+			* Sounding Dialog Token Number identifying the measurement sounding phase
+			* TOD of I2R NDP
+			* Timestamp field has 48-bit long
+		* Type 01: TOA
+			* AID12/RSID12 of an ISTA
+			* Sounding Dialog Token Number
+			* TOA of R2I NDP
+			* Timestamp field has 32-bit long
+		* Type 10: PSTOA
+			* PS-TOA timestamp of the R2I NDP that the ISTA received from the RSTA
+
+If phase shift feedback is negotiated
+* PS-TOAs and TODs reported by the RSTA shall be immediate feedback/broadcast in the Primary RSTA Broadcast Passive TB Ranging Measurement Report frame
+* PS-TOAs, TODs, and CFOs shall be immediate feedback/rebroadcasted in the Secondary RSTA Broadcast Passive TB Ranging Measurement Report
+* TOAs may be immediate or delayed feedback
+
+
+Bug???
+How can we get the TOA/PSTOA of a ISTA reported by another ISTA ?
+
+
+CFO
+* When using CFO in the conversion from the ISTA’s time basis to the RSTA’s, the RSTA uses the CFO reported in the CFO Parameter field of the I2R LMR. (In R2I LMR, CFO Parameter is reserved.)
+* The CFO between the ISTA and the RSTA exceeds the allowed tolerance from the values, this can be an indication of a security attack.
+* RSTA may account for clock rate differences between ISTA and RSTA based on the CFO parameter included in the received I2R LMR
+
+## Differential ToF Calculation
+
 
 ## LMR frame
 
@@ -491,31 +380,18 @@ ISTA can initiate an FTM modification
 A TB ranging FTM session may be terminated, if
 * (by both) ISTA fails to respond to a TF Ranging Poll frame and receive one TF Ranging (Secured) Sounding frame containing its AID/RSID at least once within the Max Session Expiry interval
 	* Max Session Expiry interval starts from either the end of the successful FTM session negotiation or the beginning of the last successful TB ranging measurement exchange
-* (by RSTA) during the session when the RSTA is permitted to transmit an R2I LMR frame, RSTA transmits an A-MPDU containing an R2I LMR frame and a Fine Timing Measurement frame
-	* R2I LMR frame
+* (by RSTA) during the session when the RSTA is permitted to transmit an R2I LMR frame, RSTA transmits an A-MPDU containing an LMR frame and a Fine Timing Measurement frame
+	* LMR frame
 		* Dialog Token field set to 0 
 		* type Action No ACK
 	* FTM frame
-		* Diaglog Token field and Follow Up Dialog Token field is set as 0
+		* Follow Up Dialog Token field is set as 0
 		* not include any Ranging Parameters field
-		* type Action No ACK
 * (by ISTA) ISTA sends a Fine Timing Measurement Request frame 
 	* Trigger field set to 0
 	* not include Ranging Parameters element
 	* not include Measurement Request element
 * (by ISTA) ISTA sends an IFTMR requests a new session with modified ranging parameters
-
-## Availabiltiy Window Update
-
-RSTA can initiate an availability window update by sending an A-MPDU containing an R2I LMR frame and a Fine Timing Measurement frame when it is permitted to transmit an R2I LMR frame:
-	* R2I LMR frame
-	* FTM frame
-		* type Action No ACK
-		* Diaglog Token field and Follow Up Dialog Token field is set as 0
-		* Include a Ranging Parameters field containing an TB-Specific subelement
-		* The Availability Window field indicates the parameters of the new availability window assigned to the corresponding FTM session
-The existing ranging session continues based on current Availability Window parameters until the start of the new availability window signaled in the FTM frame.
-
 
 
 ## Ranging Trigger Frame
@@ -902,6 +778,7 @@ To announce scheduling and parameters of the availability window for passive TB 
 * FTM (Fine Timing Measurement)
 * NGP (Next Generation Positioning)
 * LCI (Location Configuration Information)
+	* As defined in IETF RFC 6225: includes latitude, longitude, and altitude, with uncertainty indicators for each.
 * LO (Local Oscillator)
 * TU (Time Unit)
 	* 1024 microseconds (us), roughly 1 milisecond (ms)
@@ -931,6 +808,7 @@ To announce scheduling and parameters of the availability window for passive TB 
 * RSID (ranging session Identifier)
 * AWV (antenna weight vector)
 * TF (trigger frame)
+* LOS (line of sight)
 
 * HE-LTF (high efficiency – long training field)
 	* HE-LTP Repetitions: multiple transmissions of HE-LTF symbols in an HE Ranging NDP or HE TB Ranging NDP
