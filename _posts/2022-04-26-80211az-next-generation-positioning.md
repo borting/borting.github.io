@@ -285,6 +285,8 @@ IFTM
 			* Larger than Periodicity field in RSTA Availability Window element
 * FTM Synchronization Information element
 	* if Status Indication = 1
+	* TSF Sync Info
+		* 4 least significant octets of RSTA's TSF
 
 
 RSTA shall reject a request for TB ranging from an ISTA if the RSTA cannot assign the ISTA to an availability window that overlaps with a 10 TU interval in which the ISTA is available

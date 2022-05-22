@@ -151,8 +151,8 @@ Difference with TB ranging
 RSTA should poll all ISTAs assigned to that availability window
 * typically done in a single polling/sounding/reporting triplet.
 * multiple polls if the available bandwidth is insufficient to allow for the polling of all ISTAs assigned to the availability window
-	* multiple polling/sounding/reporting triplets within a single TXOP
-	* multiple polling/sounding/reporting triplets in separate TXOPs
+	* multiple polling/sounding/reporting triplets within a single TxOP
+	* multiple polling/sounding/reporting triplets in separate TxOPs
 
 ### Polling Phase
 
@@ -186,8 +186,8 @@ After RSTA has sent Passive Sounding Ranging TF to each ISTA, RSTA sends a Rangi
 
 Bandwidth selection
 * less than or equal to the Max Bandwidth RSTA indicated to the ISTA
-* RSTA shall set the TXVECTOR parameter CH\_BANDWIDTH shall be the same value as the BW subfield of the Common Info field in the Passive Sounding Ranging Trigger frame.
-* ISTA responses an HE Ranging NDP shall set the TXVECTOR parameter CH\_BANDWIDTH to be the same value as the BW subfield of the Common Info field in the Passive Sounding Ranging Trigger frame.
+* RSTA shall set the TXVECTOR parameter CH\_BANDWIDTH be the same value as the BW subfield of the Common Info field in the Passive Sounding Ranging Trigger frame.
+* ISTA responses an HE Ranging NDP (I2R NDP) shall set the TXVECTOR parameter CH\_BANDWIDTH to be the same value as the BW subfield of the Common Info field in the Passive Sounding Ranging Trigger frame.
 
 ISTA may measure and report either the TOAs, or both the TOAs and the PSTOAs, when it receives the HE Ranging NDPs transmitted by the other ISTAs participating in the passive TB ranging exchange.
 By reporting the timestamps for when it received the other ISTAs NDP transmissions, the quality of the location estimate for a PSTA listening in to the passive TB ranging exchanges can be improved.
@@ -238,20 +238,22 @@ Step 1
 RSTA sends R2I LMR reports to ISTAs.
 If phase shift feedback is negotiated, RSTA shall report its measured PSTOA in the R2I LMR frame.
 
-
 Step 2
 RSTA sends a Report Ranging Trigger frame to one or more ISTAs that sent an HE Ranging NDP in the preceding passive TB ranging measurement sounding phase.
 
 Step 3
 ISTA addressed by the Report Ranging Trigger frame shall transmit an ISTA Passive TB Ranging Measurement Report as a public Action No Ack frame.
 * ISTA Passive TB Ranging Measurement Report element
+	* Sounding Dialog Token Number field: the value of the Sounding Dialog Token Number subfield in the Ranging NDP Announcement frame
 	* CFO of the ISTA with respect to the RSTA
+	* More subfield
+		* 1: if it has more timestamps ready to report but does not have space in its allocated resources by the RSTA for ISTA Passive TB Ranging Measurement Report frame.
 	* Timestamp Measurement Report subfield
 		* Type 00: TOD (must included)
 			* AID12/RSID12 of ISTA
 			* Sounding Dialog Token Number identifying the measurement sounding phase
 			* TOD of I2R NDP
-			* Timestamp field has 48-bit long
+			* Timestamp field has 48-bit long, unit 1 ps
 		* Type 01: TOA
 			* AID12/RSID12
 				* 0: R2I NDP from RSTA
@@ -260,12 +262,11 @@ ISTA addressed by the Report Ranging Trigger frame shall transmit an ISTA Passiv
 				* Sounding phase of this ISTA
 				* Sounding phase of the I2R NDPs received from other ISTAs
 			* TOA of R2I NDP
-			* Timestamp field has 32-bit long
+			* Timestamp field has 32-bit long, unit 16 ps
 		* Type 10: PSTOA
 			* PS-TOA timestamp of the R2I NDP that the ISTA received from the RSTA
 			* PS-TOAs for the I2R NDPs received from other ISTAs participating in the passive TB ranging
-	* More subfield
-		* 1: if it has more timestamps ready to report but does not have space in its allocated resources by the RSTA for ISTA Passive TB Ranging Measurement Report frame.
+			* Timestamp field has 32-bit long, unit 16 ps
 
 Step 4
 RSTA sends the Primary RSTA Broadcast Passive TB Ranging Measurement Report frames
@@ -298,6 +299,7 @@ RSTA sends the Primary RSTA Broadcast Passive TB Ranging Measurement Report fram
 		* Type 10: PSTOA
 			* PS-TOA timestamp of the I2R NDP that the RSTA received from a ISTA
 * Passive TB Ranging LCI Table element
+	* Contain RSTA/ISTA location info
 	* RSTA LCI Report
 		* if the RSTA has dot11PassiveTBRangingAODImplemented = 1, contain the Antenna Placement and Calibration subelement
 	* ISTA LCI Reports Entries
@@ -335,7 +337,14 @@ CFO
 * The CFO between the ISTA and the RSTA exceeds the allowed tolerance from the values, this can be an indication of a security attack.
 * RSTA may account for clock rate differences between ISTA and RSTA based on the CFO parameter included in the received I2R LMR
 
-## Differential ToF Calculation
+## Differential Time of Flight (DToF) Calculation
+
+* ΔPI : Clock diff b/w PSTA and ISTA
+* ΔPR : Clock diff b/w PSTA and RSTA
+* ΔRI : Clock diff b/w RSTA and ISTA = ((t2 - t1) - (t4 - t3)) / 2 = ΔPI - ΔRI
+* ToFPR = t6 - (t3 + ΔPR) = t6 - (t3 + ΔPI - ΔRI)
+* ToFPI = t5 - (t1 + ΔPI)
+* DToFPRI  = ToFPR - ToFPI = t6 - t5 - t3 + t1 + ΔRI = t6 - t5 - t3 + t1 +((t2 - t1) - (t4 - t3)) / 2 = t6 - t5 + (-t3 - t4 + t2 + t1) / 2
 
 
 ## LMR frame
@@ -409,42 +418,15 @@ Sounding Dialog Token Number subfield is only used in Passive Sounding Rangging 
 The same value is included in the Sounding Dialog Token field of the Ranging NDP Announcement frame transmitted within the same Availability Window.
 
 
+# Beacon
 
-# Non-TB Ranging Measurement Exchange
+To announce scheduling and parameters of the availability window for passive TB ranging, RSTA includes an RSTA Availability Window element in its Beacon frame
+* RSTA Availability Window
+	* Availability Window Broadcast Format subfield in the Header subfield = 1
+	* Passive TB Ranging Parameters subfield
+		* indicates the requested or allocated PPDU format and nominal bandwidth used to transmit the I2R/R2I NDP exchange
+		* the bandwidth used for the exchanged frames is equal to or smaller than the declared bandwidth
 
-A ranging measurement procedure that uses NDP, and is not initiated by a Ranging Trigger frame.
-
-An availability window instance is negotiated, during whch the ISTA may come to the channel at any time and use contention based access to initiate a new measurement exchange.
-
-## Negotiation
-
-IFTMR
-* Ranging parameters
-	* I2R LMR Feedback
-		* 1: ISTA shares measurement results with the RSTA
-		* 0: ISTA does not share measurement results with the RSTA
-	* Format and Bandwidth
-	* Max R2I Repetition
-		* must > 0, if Secure LTF Required field = 1
-	* Max I2R Repetition
-		* must > 0, if Secure LTF Required field = 1
-	* Max R2I STS ≤ 80 MHz
-	* Max R2I STS > 80 MHz
-	* Max I2R STS ≤ 80 MHz
-	* Max I2R STS > 80 MHz
-	* Max R2I LTF Total
-	* Max I2R LTF Total
-	* I2R AOA Requested
-	* R2I AOA Requested
-	* Non-TB Specific subelement
-		* I2R Tx Power field: announce the TX power of I2R NDPs
-		* R2I Tx Power field: announce the TX power of R2I NDPs
-
-IFTM
-* Ranging parameters
-	* Non-TB Specific subelement
-		* I2R Tx Power field: announce the TX power of I2R NDPs
-		* R2I Tx Power field: announce the TX power of R2I NDPs
 
 # Passive TB Ranging Measurement Exchange
 
@@ -522,7 +504,6 @@ When to establish a PTKSA before initating a FTM procedure
 
 
 
-
 # Scheduling
 
 Centric
@@ -533,7 +514,6 @@ Centric
 	* passive TB ranging is scheduled by the RSTA in an availability window used for passive location
 
 To announce scheduling and parameters of the availability window for passive TB ranging, RSTA includes an RSTA Availability Window element in its Beacon frame
-
 
 # Related Sections in IEEE 802.11md
 
