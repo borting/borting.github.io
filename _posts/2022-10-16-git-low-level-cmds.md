@@ -41,53 +41,6 @@ git cat-file -p COMMIT_ISH
 git ls-tree TREE_ISH_SHA1
 ```
 
-# git symbolic-ref
-
-* Update `GIT_DIR/HEAD` to a branch under `GIT_DIR/refs/heads/`
-```shell
-git symbolic-ref HEAD refs/heads/BRANCH_NAME
-```
-
-* Note that if we want to let HEAD refers to commit (i.e. entering deteched HEAD state), we can only edit `GIT_DIR/HEAD` directly
-```shell
-echo COMMIT_SHA1 > GIT_DIR/HEAD
-```
-
-# git update-ref
-
-* Update reference under `GIT_DIR/refs/`
-```shell
-# branch
-git update-ref refs/heads/BRANCH_NAME COMMIT_ID
-
-# lightweight tag
-git update-ref refs/tags/TAG_NAME COMMIT_ID
-```
-
-* Update a branch referred by `GIT_DIR/HEAD` (this does not update the content of `GIT_DIR/HEAD`)
-```shell
-git update-ref HEAD COMMIT_SHA1
-```
-
-# git show-ref
-
-* Print all refs under `GIT_DIR/refs`
-```shell
-git show-ref
-```
-
-# git pack-refs
-
-* Pack all reference under `GIT_DIR/refs/heads` and `GIT_DIR/refs/tags` to `GIT_DIR/packed-refs` for search efficency
-```shell
-git pack-refs --all
-```
-
-* Pack all tags and non-active branches to `GIT_DIR/packed-refs` for search efficency
-```shell
-git pack-refs 
-```
-
 # git hash-object
 
 * Create a blob object to `GIT_DIR/objects`
@@ -121,7 +74,7 @@ git write-tree
 git read-tree --prefix=PATH TREE_SHA1
 ```
 
-# commit-tree
+# git commit-tree
 
 * Create a commit object, which takes a tree objects as the top-level tree of the commits
 ```shell
@@ -133,9 +86,72 @@ echo 'commit_msg' | git commit-tree TREE_SHA1
 echo 'commit_msg' | git commit-tree TREE_SHA1
 ```
 
+# git update-ref
+
+* Update reference under `GIT_DIR/refs/`
+```shell
+# Create/update a branch
+git update-ref refs/heads/BRANCH_NAME COMMIT_ID
+
+# Create a lightweight tag
+git update-ref refs/tags/TAG_NAME COMMIT_ID
+```
+
+* Update a branch referred by `GIT_DIR/HEAD` (this does not update the content of `GIT_DIR/HEAD`)
+```shell
+git update-ref HEAD COMMIT_SHA1
+```
+
+# git symbolic-ref
+
+* Update `GIT_DIR/HEAD` to a branch under `GIT_DIR/refs/heads/`
+```shell
+git symbolic-ref HEAD refs/heads/BRANCH_NAME
+```
+
+* Note that if we want to let HEAD refers to commit (i.e. entering deteched HEAD state), we can only edit `GIT_DIR/HEAD` directly
+```shell
+echo COMMIT_SHA1 > GIT_DIR/HEAD
+```
+
+# git show-ref
+
+* Print all refs under `GIT_DIR/refs`
+```shell
+git show-ref
+```
+
+# git pack-refs
+
+* Pack all reference under `GIT_DIR/refs/heads` and `GIT_DIR/refs/tags` to `GIT_DIR/packed-refs` for search efficency
+```shell
+git pack-refs --all
+```
+
+* Pack all tags and non-active branches to `GIT_DIR/packed-refs` for search efficency
+```shell
+git pack-refs 
+```
+
+# git gc
+
+* Recycle dangling objects and archive part of objects which are reachable from references to `GIT_DIR/.git/objects/pack/pack-XXXX.pack` (as well as associated index)
+```shell
+git gc
+```
+
+# git verify-pack
+
+* Show list of objects contained in the pack
+```shell
+git verify-pack -v .git/objects/pack/pack-XXXX.idx
+```
+
 # Reference
 
 * [Git Internals - Plumbing and Porcelain](https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain)
 * [Git Internals - Git Objects](https://git-scm.com/book/en/v2/Git-Internals-Git-Objects)
+* [Git Internals - Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)
+* [Git Internals - Packfiles](https://git-scm.com/book/en/v2/Git-Internals-Packfiles)
 * [git-update-ref - Update the object name stored in a ref safely](https://git-scm.com/docs/git-update-ref)
 * [git-pack-refs - Pack heads and tags for efficient repository access](https://git-scm.com/docs/git-pack-refs)
