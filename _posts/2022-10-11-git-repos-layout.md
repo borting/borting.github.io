@@ -169,8 +169,8 @@ Such a repository has
 * one main working directory, created by either `git init` or `git clone`,
 * one or more linked working directories, created by `git worktree add`
 
-In main working directory, `$GIT_COMMON_DIR` points to NULL and `$GIT_DIR` points to `.git` under the main working directory.
-In linked working directories, `$GIT_COMMON_DIR` points to `.git` under the main working directory and `$GIT_DIR` points to `.git/worktrees/ID/` under the main working directory
+In main working directory, `$GIT_COMMON_DIR` is meaningless and `$GIT_DIR` points to `.git/` under the main working directory.
+In linked working directories, `$GIT_COMMON_DIR` points to `.git/` under the main working directory and `$GIT_DIR` points to `.git/worktrees/ID/` under the main working directory
 
 These working directories share the same `$GIT_DIR` of the main working directory, and the linked working directories have some additional settings/logs stored under `GIT_DIR/worktrees/ID/`
 
@@ -197,6 +197,8 @@ Customization scripts used by various Git commands.
 * [Git Repository Layout](https://git-scm.com/docs/gitrepository-layout)
 * [what's inside your .git directory](https://gitready.com/advanced/2009/03/23/whats-inside-your-git-directory.html)
 * [10.3 Git Internals - Git References](https://git-scm.com/book/en/v2/Git-Internals-Git-References)
-* [$GIT_COMMON_DIR: a new environment variable](https://git.kernel.org/pub/scm/git/git.git/commit/?id=c7b3a3d2fe2688a30ddb8d516ed000eeda13c24e)
+* [Manage multiple working trees](https://git-scm.com/docs/git-worktree)
+* [How can I have multiple working directories with Git?](https://stackoverflow.com/a/30185564)
+* [$GIT\_COMMON\_DIR: a new environment variable](https://git.kernel.org/pub/scm/git/git.git/commit/?id=c7b3a3d2fe2688a30ddb8d516ed000eeda13c24e)
 * [深入 Git：index 檔案](https://titangene.github.io/article/git-index.html)
 * [Understanding Git — Index](https://konrad126.medium.com/understanding-git-index-4821a0765cf)
