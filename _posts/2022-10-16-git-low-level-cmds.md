@@ -127,6 +127,13 @@ echo COMMIT_SHA1 > GIT_DIR/HEAD
 git show-ref
 ```
 
+* Print the content of a tag.
+If it is a lightweight tag, a `refs/tags/TAG_NAME` with tag object ID will be present.
+If it is a annotated taf, an additional line containg `^{}` dereference operator will be present.
+``` shell
+git show-ref -d --tags TAG_NAME
+```
+
 # git pack-refs
 
 * Pack all reference under `GIT_DIR/refs/heads` and `GIT_DIR/refs/tags` to `GIT_DIR/packed-refs` for search efficency
