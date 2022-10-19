@@ -160,6 +160,10 @@ git gc
 git verify-pack -v .git/objects/pack/pack-XXXX.idx
 ```
 
+# git rev-parse
+
+# git rev-list
+
 # Reference
 
 * [Git Internals - Plumbing and Porcelain](https://git-scm.com/book/en/v2/Git-Internals-Plumbing-and-Porcelain)
