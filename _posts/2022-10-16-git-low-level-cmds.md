@@ -48,6 +48,12 @@ git ls-tree TREE_ISH_SHA1
 git hash-object -w FILE
 ```
 
+* Create a blob object from stdin
+```shell
+cat FILE | git hash-object -w --stdin
+echo 'text content' | git hash-object -w --stdin
+```
+
 # git update-index
 
 * Add a new path in `GIT_DIR/index` with a new blob/tree object
