@@ -54,6 +54,13 @@ cat FILE | git hash-object -w --stdin
 echo 'text content' | git hash-object -w --stdin
 ```
 
+# git count-objects
+
+* Count number of object stoted in `GIT_DIR/objects/`
+```sell
+git count-objects -v
+```
+
 # git update-index
 
 * Add a new path in `GIT_DIR/index` with a new blob/tree object
