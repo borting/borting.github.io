@@ -169,6 +169,11 @@ git verify-pack -v .git/objects/pack/pack-XXXX.idx
 
 # git rev-parse
 
+* Resolve the commit SHA1 of the tip of a bracnh
+```shell
+git rev-parse BRANCH_NAME
+```
+
 # git rev-list
 
 # Reference
