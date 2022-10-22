@@ -12,26 +12,33 @@ image: plum.jpg
 
 # git cat-file
 
-* Print commit content
+* Print type of an object
 ```shell
+git cat-file -t OBJECT_SHA1
+```
+
+* Print content of an object
+```
+# Parse type automatically
+git cat-file -p OBJECT_SHA1
+
+# Print commit content
 git cat-file commit COMMIT_SHA1
-git cat-file -p COMMIT_SHA1
-```
 
-* Print tree content
-```shell
-git cat-file -p TREE_SHA1
-```
-
-* Print blob content
-```shell
+# Print tree content
 git cat-file blob BLOB_SHA1
-git cat-file -p BLOB_SHA1
 ```
 
 * Print the top-level tree object of a commit or tip of a branch
 ```shell
 git cat-file -p COMMIT_ISH
+```
+
+* Get the root tree of a commit-ish
+```shell
+git cat-file -p COMMIT^{tree}
+git cat-file -p TAG^{tree}
+git cat-file -p BRANCH^{tree}
 ```
 
 # git ls-tree
@@ -174,7 +181,21 @@ git verify-pack -v .git/objects/pack/pack-XXXX.idx
 git rev-parse BRANCH_NAME
 ```
 
+* Get SHA1 of a tag
+```shell
+git rev-parse TAG_NAME
+```
+
 # git rev-list
+
+* Lists commit objects in reverse chronological order
+```shell
+#List the object ID from COMMITISH to first commit
+git rev-list COMMITISH
+
+# List the object ID from COMMITISH_A to COMMITISH_B
+git rev-list COMMITISH_A...COMMITISH_B
+```
 
 # Reference
 
