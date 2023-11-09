@@ -14,7 +14,7 @@ image: plum.jpg
 
 # Repo Sync with Reference
 
-指令:
+快速藉由 local repo projects 來 sync 所有 projects, 且新的 repo projects 擁有獨立的 git object stores
 ```shell
 repo init -u MANIFEST_REPOS -m MANIFEST --reference=/PATH/TO/LOCAL/REPO/REPOSITORY --dissociate
 repo sync
@@ -24,6 +24,19 @@ repo sync
 `--dissociate` 代表 repo 在 git clone 完所有 projects 後, 不會再參考 local repo repository 的 git object store.
 之後 `repo sync` 也會直接從 remote repository fetch.
 這樣可以避免被 reference 的 local repo repository 被移除後, 後下載的 repo repository 的 git object store 損毀的狀況發生.
+
+另一種做法是和現有的 local repo projects.
+這種方法的優點是可以減少硬體空間, 但是被 shared local repo projects 要小心不能被篩除
+```shell
+# Create repo porjects to be sharef
+mkdir matrix; cd matrix
+repo init -u MANIFEST_REPOS -m MANIFEST
+repo sync
+
+# Share object store with the matrix prokect
+repo init -u MANIFEST_REPOS -m MANIFEST --reference=/PATH/TO/MATRIX
+repo sync
+```
 
 # Reference
 
