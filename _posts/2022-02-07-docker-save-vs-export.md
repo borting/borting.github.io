@@ -20,10 +20,16 @@ $ docker save IMAGE:TAG docker_image.tar
 $ docker save IMAGE:TAG | gzip > docker_image.tar.gz
 ```
 
+若要保留所有 layer 的訊息
+```shell
+$ docker save IMAGE:TAG $(docker history -q IMAGE:TAG | tail -n +1 | grep -v \<missing\> | tr '\n' ' ') | gzip > docker_image.tar.gz
+```
+
 使用 `docker load` 將壓縮檔轉成 image
 ```shell
 $ docker load < docker_image.tar
 $ docker load < docker_image.tar.gz
+$ gunzip -c docker_image.tar.gz | docker load
 ```
 
 # Docker Export and Import
