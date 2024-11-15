@@ -72,3 +72,6 @@ $ docker run -d ORIG_IMAGE | tee >(xargs docker export | docker import --change 
 * ["No command specified" from re-imported docker image/container](https://serverfault.com/a/797619)
 * [Flattening Docker images](https://l10nn.medium.com/flattening-docker-images-bafb849912ff)
 * [Can the output of one command be piped to two other commands?](https://superuser.com/a/7458)
+* [Is there a way to tag a previous layer in a docker image or revert a commit?](https://stackoverflow.com/a/38236494)
+* [使用 save / export 分享 image](https://ithelp.ithome.com.tw/m/articles/10249573)
+* [把image另外儲存成檔案](https://peihsinsu.gitbooks.io/docker-note-book/content/docker-save-image.html)
